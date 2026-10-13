@@ -253,7 +253,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
       <span class="lg"><i style="background:var(--taken)"></i>Interest moved to spending every month</span>
     </div>
     <div class="plotwrap" id="plotwrap">
-      <svg class="plot" id="plot" viewBox="0 0 820 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Growth comparison"></svg>
+      <svg class="plot" id="plot" viewBox="0 0 620 380" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Growth comparison"></svg>
       <div class="tip" id="tip"></div>
     </div>
     <button class="btn ghost" id="tableBtn" style="margin-top:12px">Show the numbers</button>
@@ -890,7 +890,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     while(v < max + step*0.5){ t.push(v); v += step; }
     return t;
   }
-  var PAD = {l:70, r:76, t:14, b:34}, W = 820, H = 200, geom = null;
+  var PAD = {l:66, r:72, t:14, b:38}, W = 620, H = 380, geom = null;
 
   function drawChart(){
     var d = series(), svg = document.getElementById('plot');
