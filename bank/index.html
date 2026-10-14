@@ -377,7 +377,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     rate:0.05, rate2:0.01, cap:30, real:false, startMonth:null, pin:'',
     kids:{zev:{opening:{savings:120, spending:15.5}, entries:[]},
           eve:{opening:{savings:95, spending:22}, entries:[]}},
-    kid:'zev', months:24, who:'all', metric:'interest', mode:'parent', openForm:null
+    kid:'zev', months:24, who:'all', metric:'interest', mode:'kid', openForm:null
   };
 
   var db = null, writing = {};
@@ -489,7 +489,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
       localStorage.setItem(LS, JSON.stringify({
         rate:state.rate, rate2:state.rate2, cap:state.cap,
         real:state.real, startMonth:state.startMonth, pin:state.pin, kids:state.kids,
-        kid:state.kid, months:state.months, who:state.who, metric:state.metric, mode:state.mode
+        kid:state.kid, months:state.months, who:state.who, metric:state.metric
       }));
     }catch(e){}
   }
@@ -513,7 +513,6 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
       if(p.months) state.months = p.months;
       if(p.who) state.who = p.who;
       if(p.metric) state.metric = p.metric;
-      if(p.mode) state.mode = p.mode;
     }catch(e){}
   }
   var quiet = {};
