@@ -148,7 +148,6 @@ table{width:100%;border-collapse:collapse;margin-top:14px;font-size:.85rem}
 th,td{text-align:right;padding:7px 10px;border-bottom:1px solid var(--grid);font-variant-numeric:tabular-nums;font-weight:700}
 th:first-child,td:first-child{text-align:left}
 th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-muted);font-weight:800}
-.tablewrap{overflow-x:auto}
 
 .ledhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
 .led{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
@@ -239,29 +238,28 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     <div class="rows" id="interestRows"></div>
   </section>
 
-  <div class="filters">
-    <span class="seglab">Show</span>
-    <span class="seg" data-role="kid" id="segKid">
-      <button data-v="zev" aria-pressed="true">Zev</button>
-      <button data-v="eve" aria-pressed="false">Eve</button>
-    </span>
-    <span class="seglab">Looking ahead</span>
-    <span class="seg" data-role="span" id="segSpan">
-      <button data-v="12" aria-pressed="false">1 year</button>
-      <button data-v="24" aria-pressed="true">2 years</button>
-      <button data-v="36" aria-pressed="false">3 years</button>
-    </span>
-    <span class="seglab parentonly">Chart</span>
-    <span class="seg parentonly" data-role="metric" id="segMetric">
-      <button data-v="interest" aria-pressed="true">Monthly interest</button>
-      <button data-v="total" aria-pressed="false">Total money</button>
-    </span>
-  </div>
-
   <div class="row2">
     <section class="card chartcard">
       <h2 id="chartTitle"></h2>
       <p class="cap" id="chartCap"></p>
+      <div class="filters">
+        <span class="seglab">Show</span>
+        <span class="seg" data-role="kid" id="segKid">
+          <button data-v="zev" aria-pressed="true">Zev</button>
+          <button data-v="eve" aria-pressed="false">Eve</button>
+        </span>
+        <span class="seglab">Looking ahead</span>
+        <span class="seg" data-role="span" id="segSpan">
+          <button data-v="12" aria-pressed="false">1 year</button>
+          <button data-v="24" aria-pressed="true">2 years</button>
+          <button data-v="36" aria-pressed="false">3 years</button>
+        </span>
+        <span class="seglab parentonly">Chart</span>
+        <span class="seg parentonly" data-role="metric" id="segMetric">
+          <button data-v="interest" aria-pressed="true">Monthly interest</button>
+          <button data-v="total" aria-pressed="false">Total money</button>
+        </span>
+      </div>
       <div class="legend">
         <span class="lg"><i style="background:var(--kept)"></i>Interest kept in savings every month</span>
         <span class="lg"><i style="background:var(--taken)"></i>Interest moved to spending every month</span>
@@ -270,8 +268,6 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
         <svg class="plot" id="plot" viewBox="0 0 620 380" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Growth comparison"></svg>
         <div class="tip" id="tip"></div>
       </div>
-      <button class="btn ghost" id="tableBtn" style="margin-top:12px">Show the numbers</button>
-      <div class="tablewrap" id="tablewrap" hidden></div>
     </section>
 
     <section class="card">
@@ -916,7 +912,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     while(v <= cap + 0.01){ t.push(v); v += INTEREST_STEP; }
     return t;
   }
-  var PAD = {l:78, r:88, t:14, b:46}, W = 620, H = 380, geom = null;
+  var PAD = {l:92, r:100, t:14, b:54}, W = 620, H = 380, geom = null;
 
   function drawChart(){
     var d = series(), svg = document.getElementById('plot');
@@ -931,14 +927,16 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     var g = '', i;
     ticks.forEach(function(t){
       var y = Y(t);
-      g += '<line x1="'+PAD.l+'" y1="'+y.toFixed(1)+'" x2="'+(W-PAD.r)+'" y2="'+y.toFixed(1)+'" stroke="var(--grid)" stroke-width="1"/>'
-        + '<text x="'+(PAD.l-12)+'" y="'+(y+5.5).toFixed(1)+'" text-anchor="end" font-size="18" font-weight="700" fill="var(--ink-muted)" font-family="Nunito, sans-serif">'+money_.format(t)+'</text>';
+      g += '<text x="'+(PAD.l-14)+'" y="'+(y+7).toFixed(1)+'" text-anchor="end" font-size="23" font-weight="700" fill="var(--ink-muted)" font-family="Nunito, sans-serif">'+money_.format(t)+'</text>';
     });
     var stepX = d.n <= 12 ? 3 : 6;
     for(i=0;i<=d.n;i+=stepX){
-      g += '<text x="'+X(i).toFixed(1)+'" y="'+(H-PAD.b+28)+'" text-anchor="middle" font-size="18" font-weight="700" fill="var(--ink-muted)" font-family="Nunito, sans-serif">'+monthLabel(i)+'</text>';
+      g += '<text x="'+X(i).toFixed(1)+'" y="'+(H-PAD.b+34)+'" text-anchor="middle" font-size="23" font-weight="700" fill="var(--ink-muted)" font-family="Nunito, sans-serif">'+monthLabel(i)+'</text>';
     }
-    g += '<line x1="'+PAD.l+'" y1="'+Y(0).toFixed(1)+'" x2="'+(W-PAD.r)+'" y2="'+Y(0).toFixed(1)+'" stroke="var(--line)" stroke-width="1.5"/>';
+    /* axis spines: a vertical line for the Y axis, a horizontal line (at the
+       zero baseline) for the X axis — no gridlines across the plot area */
+    g += '<line x1="'+PAD.l+'" y1="'+PAD.t+'" x2="'+PAD.l+'" y2="'+(H-PAD.b)+'" stroke="var(--line)" stroke-width="1.5"/>'
+      + '<line x1="'+PAD.l+'" y1="'+Y(0).toFixed(1)+'" x2="'+(W-PAD.r)+'" y2="'+Y(0).toFixed(1)+'" stroke="var(--line)" stroke-width="1.5"/>';
     var band = 'M'+X(0).toFixed(1)+' '+Y(d.kept[0]).toFixed(1);
     for(i=1;i<=d.n;i++) band += ' L'+X(i).toFixed(1)+' '+Y(d.kept[i]).toFixed(1);
     for(i=d.n;i>=0;i--) band += ' L'+X(i).toFixed(1)+' '+Y(d.taken[i]).toFixed(1);
@@ -948,8 +946,8 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
       + '<path d="'+line(d.kept)+'" fill="none" stroke="var(--kept)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'
       + '<circle cx="'+X(d.n).toFixed(1)+'" cy="'+Y(d.taken[d.n]).toFixed(1)+'" r="5.5" fill="var(--taken)" stroke="var(--paper)" stroke-width="2"/>'
       + '<circle cx="'+X(d.n).toFixed(1)+'" cy="'+Y(d.kept[d.n]).toFixed(1)+'" r="5.5" fill="var(--kept)" stroke="var(--paper)" stroke-width="2"/>'
-      + '<text x="'+(X(d.n)+12)+'" y="'+(Y(d.kept[d.n])+5).toFixed(1)+'" font-size="17" font-weight="800" fill="var(--kept)" font-family="Nunito, sans-serif">'+money_.format(d.kept[d.n])+'</text>'
-      + '<text x="'+(X(d.n)+12)+'" y="'+(Y(d.taken[d.n])+5).toFixed(1)+'" font-size="17" font-weight="800" fill="var(--taken)" font-family="Nunito, sans-serif">'+money_.format(d.taken[d.n])+'</text>'
+      + '<text x="'+(X(d.n)+12)+'" y="'+(Y(d.kept[d.n])+6).toFixed(1)+'" font-size="20" font-weight="800" fill="var(--kept)" font-family="Nunito, sans-serif">'+money_.format(d.kept[d.n])+'</text>'
+      + '<text x="'+(X(d.n)+12)+'" y="'+(Y(d.taken[d.n])+6).toFixed(1)+'" font-size="20" font-weight="800" fill="var(--taken)" font-family="Nunito, sans-serif">'+money_.format(d.taken[d.n])+'</text>'
       + '<line id="cross" x1="0" y1="'+PAD.t+'" x2="0" y2="'+(H-PAD.b)+'" stroke="var(--ink-muted)" stroke-width="1" opacity="0"/>'
       + '<circle id="dotK" r="6" fill="var(--kept)" stroke="var(--paper)" stroke-width="2" opacity="0"/>'
       + '<circle id="dotT" r="6" fill="var(--taken)" stroke="var(--paper)" stroke-width="2" opacity="0"/>'
@@ -1000,19 +998,6 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
       ? 'The blue line is the payment ' + name + ' gets each month if the interest stays in the pot. The orange line is the same payment if it is taken out and spent — it never moves.'
       : 'Both lines count every dollar earned — the orange one includes money taken out and spent, so it is a fair race. Saving pulls ahead because next month’s interest is worked out on a bigger balance.';
   }
-  function drawTable(){
-    var d = series(), step = d.n <= 12 ? 2 : 3, rows = '', i;
-    var head = metric() === 'interest'
-      ? '<tr><th>Month</th><th>Monthly interest if kept</th><th>Monthly interest if spent</th><th>Difference</th></tr>'
-      : '<tr><th>Month</th><th>Kept in savings</th><th>Moved to spending</th><th>Difference</th></tr>';
-    function row(i){
-      return '<tr><td>'+monthLabel(i)+'</td><td>'+fmt(d.kept[i])+'</td><td>'+fmt(d.taken[i])+'</td><td>'+fmt(d.kept[i]-d.taken[i])+'</td></tr>';
-    }
-    for(i=0;i<=d.n;i+=step) rows += row(i);
-    if(d.n % step !== 0) rows += row(d.n);
-    document.getElementById('tablewrap').innerHTML = '<table><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>';
-  }
-
   /* ---------------- backup ---------------- */
   function csv(){
     var rows = [['Date','Kid','Type','Description','Savings change','Spending change']];
@@ -1089,12 +1074,6 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     document.querySelectorAll('#segMetric button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.v === state.metric ? 'true':'false'); });
     document.querySelectorAll('#segWho button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.v === state.who ? 'true':'false'); });
   }
-  var tableBtn = document.getElementById('tableBtn');
-  tableBtn.addEventListener('click', function(){
-    var t = document.getElementById('tablewrap');
-    t.hidden = !t.hidden;
-    tableBtn.textContent = t.hidden ? 'Show the numbers' : 'Hide the numbers';
-  });
   var sheet = document.getElementById('sheet');
   document.getElementById('gearBtn').addEventListener('click', function(e){ e.stopPropagation(); sheet.hidden = !sheet.hidden; });
   document.addEventListener('click', function(e){ if(!sheet.hidden && !sheet.contains(e.target)) sheet.hidden = true; });
@@ -1145,7 +1124,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     document.getElementById('startInput').value = startMonth();
     document.getElementById('pinInput').value = state.pin;
     renderKids(); renderInterest(); paintSegs();
-    drawChart(); drawTakeaways(); drawTable(); renderLedger();
+    drawChart(); drawTakeaways(); renderLedger();
   }
   window.addEventListener('resize', function(){ drawChart(); });
 
