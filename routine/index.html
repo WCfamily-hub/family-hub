@@ -624,12 +624,18 @@ h1{
     }
     return -1;
   }
+  /* Returns {text, note, found} for the row matching today, or null if no
+     row for today was found at all. `text` is the Homework-column value.
+     When that's blank, `note` picks up anything else written elsewhere in
+     the same row (e.g. a teacher's "no new pages for 3 weeks" aside) so
+     that explanation can be shown instead of a bare "no assignment". */
   function findTodaysEntry(rows, today){
     var hIdx = findHeaderRow(rows);
     if(hIdx < 0) return null;
     var header = rows[hIdx];
     var dateCol = colIndex(header, ['date']);
     var hwCol = colIndex(header, ['homework', 'assignment', 'workbook']);
+    var weekCol = colIndex(header, ['week']);
     if(dateCol < 0 || hwCol < 0) return null;
     for(var i=hIdx+1;i<rows.length;i++){
       var row = rows[i];
@@ -637,17 +643,31 @@ h1{
       var range = parseDateCell(row[dateCol], today);
       if(withinRange(range, today)){
         var text = String(row[hwCol]||'').trim();
-        if(text) return text;
+        if(text) return {text: text, note: null, found: true};
+        var note = null;
+        for(var c=0;c<row.length;c++){
+          if(c === dateCol || c === weekCol || c === hwCol) continue;
+          var v = String(row[c]||'').trim();
+          if(v){ note = v; break; }
+        }
+        return {text: null, note: note, found: true};
       }
     }
     return null;
   }
 
-  function homeworkLine(label, text, sheetUrl){
+  /* entry is null until the sheet lookup resolves, or if it found nothing
+     for today at all — the link itself always renders either way, so
+     there's always a way to go check manually. */
+  function homeworkLine(label, entry, sheetUrl){
     var span = document.createElement('span');
     span.className = 'tsub';
     span.dataset.role = 'homework-detail';
-    span.textContent = label + ': ' + text + ' — ';
+    var detail = entry && entry.text ? entry.text
+      : entry && entry.note ? entry.note
+      : entry && entry.found ? 'No assignment'
+      : null;
+    span.textContent = detail ? (label + ': ' + detail + ' — ') : (label + ' — ');
     var link = document.createElement('a');
     link.href = sheetUrl;
     link.target = '_blank';
@@ -661,17 +681,20 @@ h1{
   }
 
   function applyHomeworkDetail(){
-    if(!homeworkToday) return;
     var li = document.querySelector('li.task[data-kid="zev"][data-id="homework"]');
     if(!li) return;
     var body = li.querySelector('.tbody');
     if(!body) return;
     Array.prototype.forEach.call(body.querySelectorAll('[data-role="homework-detail"]'), function(el){ el.remove(); });
-    if(homeworkToday.math) body.appendChild(homeworkLine('Math', homeworkToday.math, MATH_SHEET_URL));
-    if(homeworkToday.chinese) body.appendChild(homeworkLine('Chinese', homeworkToday.chinese, CHINESE_SHEET_URL));
+    var hw = homeworkToday || {};
+    body.appendChild(homeworkLine('Math', hw.math, MATH_SHEET_URL));
+    body.appendChild(homeworkLine('Chinese', hw.chinese, CHINESE_SHEET_URL));
   }
 
   function loadHomework(){
+    /* render the links immediately so they're there even if the lookup
+       below is slow, fails, or finds nothing for today */
+    applyHomeworkDetail();
     var today = new Date();
     Promise.all([
       getSheetValues(CHINESE_SHEET_ID, CHINESE_GID).then(function(rows){ return findTodaysEntry(rows, today); }).catch(function(){ return null; }),
