@@ -219,6 +219,15 @@ h1{
   transition:color .18s ease;
 }
 .tsub{font-weight:700;font-size:clamp(.74rem,1.08vw,.92rem);line-height:1.25;color:var(--ink-soft)}
+.tsub[data-role="homework-detail"]{
+  display:block;
+  margin-left:12px;
+  margin-top:1px;
+  font-size:clamp(.68rem,.96vw,.82rem);
+  font-weight:700;
+  font-style:italic;
+  color:var(--zev);
+}
 .choices{display:flex;gap:7px;margin-top:5px;flex-wrap:wrap}
 .pill{
   font-family:inherit;font-weight:800;font-size:clamp(.72rem,1.02vw,.88rem);
@@ -414,6 +423,7 @@ h1{
   <a href="../" class="hubtab">Home</a>
   <a href="./" class="hubtab active">Morning Routine</a>
   <a href="../bank/" class="hubtab">Mama Bank</a>
+  <a href="https://sites.google.com/view/qedrecipes/recipes" class="hubtab" target="_blank" rel="noopener">Recipes ↗</a>
 </nav>
 
 <div class="app">
