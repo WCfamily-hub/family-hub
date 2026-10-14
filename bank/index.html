@@ -127,7 +127,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .legend{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 4px}
 .lg{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.85rem;color:var(--ink-soft)}
 .lg i{width:16px;height:4px;border-radius:2px;display:block}
-.plotwrap{position:relative;margin-top:6px}
+.plotwrap{position:relative;margin:6px auto 0;max-width:400px}
 svg.plot{display:block;width:100%;height:auto;overflow:visible;touch-action:pan-y}
 .tip{position:absolute;pointer-events:none;z-index:4;opacity:0;transition:opacity .12s ease;background:var(--paper);
   border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;box-shadow:0 10px 26px rgba(20,25,60,.2);
@@ -189,7 +189,18 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
   .kidview{grid-template-columns:1fr;justify-items:center;text-align:center}
 }
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01s!important}}
+.hubnav{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 0 0;max-width:1080px;margin:0 auto}
+.hubtab{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:.82rem;
+  padding:8px 16px;border-radius:999px;text-decoration:none;color:var(--ink-soft);background:var(--paper);
+  border:1.5px solid var(--line)}
+.hubtab.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 </style>
+
+<nav class="hubnav" aria-label="Family hub">
+  <a href="../" class="hubtab">Home</a>
+  <a href="../routine/" class="hubtab">Morning Routine</a>
+  <a href="./" class="hubtab active">Mama Bank</a>
+</nav>
 
 <div class="wrap">
   <header class="top">
@@ -890,11 +901,24 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     while(v < max + step*0.5){ t.push(v); v += step; }
     return t;
   }
+  /* Interest charts share one scale (0–40) so Zev and Eve are visually
+     comparable, and the cap only grows — by $10 steps — once a kid's
+     numbers actually need the room. "Total money" keeps the old
+     auto-fit scale, since balances vary far more than monthly interest. */
+  var INTEREST_BASE_MAX = 40, INTEREST_STEP = 10;
+  function interestTicks(max){
+    var cap = INTEREST_BASE_MAX;
+    while(max > cap) cap += INTEREST_STEP;
+    var t = [], v = 0;
+    while(v <= cap + 0.01){ t.push(v); v += INTEREST_STEP; }
+    return t;
+  }
   var PAD = {l:66, r:72, t:14, b:38}, W = 620, H = 380, geom = null;
 
   function drawChart(){
     var d = series(), svg = document.getElementById('plot');
-    var ticks = niceTicks(Math.max(d.kept[d.n], d.taken[d.n]));
+    var dataMax = Math.max(d.kept[d.n], d.taken[d.n]);
+    var ticks = metric() === 'interest' ? interestTicks(dataMax) : niceTicks(dataMax);
     var yMax = ticks[ticks.length-1] || 1;
     var pw = W-PAD.l-PAD.r, ph = H-PAD.t-PAD.b;
     var X = function(i){ return PAD.l + (i/d.n)*pw; };
