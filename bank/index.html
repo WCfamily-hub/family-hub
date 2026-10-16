@@ -386,7 +386,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
   /* ---------------- helpers ---------------- */
   var money = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'});
   var money0 = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
-  function fmt(n){ return money.format(n); }
+  function fmt(n){ return (state.mode === 'kid' ? money0 : money).format(n); }
   function r2(n){ return Math.round(n*100)/100; }
   function parseAmt(s){ var n = parseFloat(String(s).replace(/[^0-9.\-]/g,'')); return isFinite(n) ? r2(n) : null; }
   function pad2(n){ return String(n).padStart(2,'0'); }
@@ -924,7 +924,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     var X = function(i){ return PAD.l + (i/d.n)*pw; };
     var Y = function(v){ return PAD.t + ph - (v/yMax)*ph; };
     geom = {X:X, Y:Y, d:d};
-    var money_ = (metric() === 'interest') ? money : money0;
+    var money_ = (state.mode !== 'kid' && metric() === 'interest') ? money : money0;
     var g = '', i;
     ticks.forEach(function(t){
       var y = Y(t);
