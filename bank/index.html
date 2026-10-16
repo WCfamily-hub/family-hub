@@ -281,15 +281,22 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
       <div class="ledhead">
         <p class="eyebrow" style="margin:0">History</p>
         <span class="spacer"></span>
-        <span class="seg" data-role="who" id="segWho">
+        <span class="seg histpart" data-role="range" id="segRange">
+          <button data-v="recent" aria-pressed="true">Last 3 months</button>
+          <button data-v="all" aria-pressed="false">All time</button>
+        </span>
+        <span class="seg histpart" data-role="who" id="segWho">
           <button data-v="all" aria-pressed="true">Both</button>
           <button data-v="zev" aria-pressed="false">Zev</button>
           <button data-v="eve" aria-pressed="false">Eve</button>
         </span>
-        <button class="btn ghost parentonly" id="csvBtn" hidden>Save a backup</button>
+        <button class="btn ghost parentonly histpart" id="csvBtn">Save a backup</button>
+        <button class="btn ghost" id="histToggle">Hide</button>
       </div>
-      <ul class="led" id="ledger"></ul>
-      <div class="spentsum" id="spentsum"></div>
+      <div id="histBody">
+        <ul class="led" id="ledger"></ul>
+        <div class="spentsum" id="spentsum"></div>
+      </div>
     </section>
   </div>
 
@@ -384,7 +391,8 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     rate:0.05, rate2:0.01, cap:30, real:false, startMonth:null, pin:'',
     kids:{zev:{opening:{savings:120, spending:15.5, tzedakah:5}, entries:[]},
           eve:{opening:{savings:95, spending:22, tzedakah:5}, entries:[]}},
-    kid:'zev', months:24, who:'all', metric:'interest', mode:'kid', openForm:null, openInterest:null
+    kid:'zev', months:24, who:'all', metric:'interest', mode:'kid', openForm:null, openInterest:null,
+    historyOpen:true, historyRange:'recent'
   };
 
   var db = null, writing = {};
@@ -496,7 +504,8 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
       localStorage.setItem(LS, JSON.stringify({
         rate:state.rate, rate2:state.rate2, cap:state.cap,
         real:state.real, startMonth:state.startMonth, pin:state.pin, kids:state.kids,
-        kid:state.kid, months:state.months, who:state.who, metric:state.metric
+        kid:state.kid, months:state.months, who:state.who, metric:state.metric,
+        historyOpen:state.historyOpen, historyRange:state.historyRange
       }));
     }catch(e){}
   }
@@ -520,6 +529,8 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
       if(p.months) state.months = p.months;
       if(p.who) state.who = p.who;
       if(p.metric) state.metric = p.metric;
+      if(typeof p.historyOpen === 'boolean') state.historyOpen = p.historyOpen;
+      if(p.historyRange) state.historyRange = p.historyRange;
     }catch(e){}
   }
   var quiet = {};
@@ -553,7 +564,6 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
      {doc(path): {set(data), onSnapshot(onNext, onError)}}, matching exactly
      what connect() below already expects, so nothing else here changed. */
   function connect(){
-    document.getElementById('csvBtn').hidden = false;   /* backup now runs locally, always available */
     function wireUp(){
       db = window.__familyDb; markSync(true);
       db.doc('bank/settings').onSnapshot(function(s){
@@ -1007,12 +1017,27 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     if(e.type === 'adjust') return 'correction to ' + e.account;
     return 'into ' + e.account;
   }
+  function recentCutoffISO(){
+    var d = new Date();
+    d.setMonth(d.getMonth() - 3);
+    return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+  }
+  function applyHistoryVisibility(){
+    var open = state.historyOpen;
+    document.getElementById('histToggle').textContent = open ? 'Hide' : 'Show';
+    document.getElementById('histBody').hidden = !open;
+    document.querySelectorAll('.histpart').forEach(function(el){ el.hidden = !open; });
+  }
   function renderLedger(){
+    applyHistoryVisibility();
     var parent = state.mode === 'parent';
-    var list = allEntries().filter(function(r){ return state.who === 'all' || r.kid === state.who; });
+    var cutoff = state.historyRange === 'recent' ? recentCutoffISO() : null;
+    var sameWho = function(r){ return state.who === 'all' || r.kid === state.who; };
+    var list = allEntries().filter(function(r){ return sameWho(r) && (!cutoff || r.e.date >= cutoff); });
     var host = document.getElementById('ledger');
     if(!list.length){
-      host.innerHTML = '<li><span class="empty">Nothing recorded yet.</span></li>';
+      var anyEver = allEntries().some(sameWho);
+      host.innerHTML = '<li><span class="empty">' + (cutoff && anyEver ? 'Nothing in the last 3 months.' : 'Nothing recorded yet.') + '</span></li>';
     } else {
       host.innerHTML = list.slice(0,60).map(function(r){
         var e = r.e, d = entryDelta(e);
@@ -1027,10 +1052,15 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
         b.addEventListener('click', function(){ removeEntry(b.dataset.kid, b.dataset.id); });
       });
     }
-    var spends = allEntries().filter(function(r){ return r.e.type === 'purchase' && r.e.account !== 'tzedakah' && (state.who === 'all' || r.kid === state.who); });
+    var spendsAll = function(r){ return r.e.type === 'purchase' && r.e.account !== 'tzedakah' && sameWho(r); };
+    var spends = allEntries().filter(function(r){ return spendsAll(r) && (!cutoff || r.e.date >= cutoff); });
     var total = spends.reduce(function(a,r){ return a + r.e.amount; }, 0);
     var sum = document.getElementById('spentsum');
-    if(!spends.length){ sum.innerHTML = 'No spending logged yet.'; return; }
+    if(!spends.length){
+      var anySpendEver = allEntries().some(spendsAll);
+      sum.innerHTML = (cutoff && anySpendEver) ? 'No spending logged in the last 3 months.' : 'No spending logged yet.';
+      return;
+    }
     var top = {};
     spends.forEach(function(r){ var w = r.e.what || 'Spending'; top[w] = (top[w]||0) + r.e.amount; });
     var pairs = Object.keys(top).map(function(w){ return [w, top[w]]; }).sort(function(a,b){ return b[1]-a[1]; }).slice(0,3);
@@ -1236,11 +1266,19 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     var b = e.target.closest('button'); if(!b) return;
     state.who = b.dataset.v; saveLocal(); renderAll();
   });
+  document.getElementById('segRange').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    state.historyRange = b.dataset.v; saveLocal(); renderAll();
+  });
+  document.getElementById('histToggle').addEventListener('click', function(){
+    state.historyOpen = !state.historyOpen; saveLocal(); applyHistoryVisibility();
+  });
   function paintSegs(){
     document.querySelectorAll('#segKid button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.v === state.kid ? 'true':'false'); });
     document.querySelectorAll('#segSpan button').forEach(function(b){ b.setAttribute('aria-pressed', Number(b.dataset.v) === state.months ? 'true':'false'); });
     document.querySelectorAll('#segMetric button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.v === state.metric ? 'true':'false'); });
     document.querySelectorAll('#segWho button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.v === state.who ? 'true':'false'); });
+    document.querySelectorAll('#segRange button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.v === state.historyRange ? 'true':'false'); });
   }
   var sheet = document.getElementById('sheet');
   document.getElementById('gearBtn').addEventListener('click', function(e){ e.stopPropagation(); sheet.hidden = !sheet.hidden; });
