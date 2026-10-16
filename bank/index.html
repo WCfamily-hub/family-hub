@@ -81,7 +81,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .said{margin:0;font-weight:700;font-size:clamp(.8rem,1.35vw,.95rem);color:var(--ink-soft);line-height:1.35}
 .said b{display:block;font-family:"Grandstander","Nunito",sans-serif;font-weight:800;color:var(--kid);
   font-size:clamp(1.05rem,2.1vw,1.5rem);line-height:1.12;margin-top:.2em;text-wrap:balance}
-.half .btn{margin-top:auto}
+.half .btn{margin-top:auto;width:100%;white-space:normal;line-height:1.3}
 .tiernote{margin:.4em 0 0;font-weight:700;font-size:.76rem;color:var(--sun-deep);line-height:1.35;max-width:26ch}
 
 .form{grid-column:1/-1;margin-top:12px;background:var(--paper-tint);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:10px}
@@ -425,8 +425,8 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
 
   /* ---------------- ledger maths ---------------- */
   function effect(e){
-    if(e.type === 'purchase') return {savings:0, spending:-e.amount, tzedakah:0};
     var d = {savings:0, spending:0, tzedakah:0};
+    if(e.type === 'purchase'){ d[e.account || 'spending'] = -e.amount; return d; }
     d[e.account] = e.amount;
     return d;
   }
@@ -705,6 +705,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
           + '<div class="kidacts">'
           +   '<button class="btn" data-form="spend" data-kid="'+k+'">Spent something</button>'
           +   '<button class="btn" data-form="add" data-kid="'+k+'">Add money</button>'
+          +   '<button class="btn" data-form="give" data-kid="'+k+'">Gift given</button>'
           + '</div>';
       } else {
         body = '<div class="twopots">'
@@ -728,6 +729,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
           +   '<span class="potlab">Tzedakah pot</span>'
           +   boxSVG(k, b.tzedakah)
           +   '<p class="said">You have<b>'+fmt(b.tzedakah)+' set aside for giving</b></p>'
+          +   '<button class="btn" data-form="give" data-kid="'+k+'">Log a gift you gave</button>'
           + '</div>'
           + '</div>';
       }
@@ -750,14 +752,15 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
   }
 
   function formHTML(kid, mode){
-    var spend = mode === 'spend';
+    var spend = mode === 'spend', give = mode === 'give';
+    var placeholder = spend ? 'What did it go on?' : give ? 'Who did you give to?' : 'Where is it from?';
     return '<form class="form" data-kid="'+kid+'" data-mode="'+mode+'" novalidate>'
       + '<div class="fr"><input id="f-amt-'+kid+'" inputmode="decimal" placeholder="$0.00" aria-label="Amount">'
-      +   '<input id="f-what-'+kid+'" placeholder="'+(spend?'What did it go on?':'Where is it from?')+'" aria-label="Description"></div>'
-      + (spend ? '' : '<select id="f-acct-'+kid+'" aria-label="Which pot"><option value="savings">into savings</option><option value="spending">into spending</option><option value="tzedakah">into tzedakah</option></select>')
+      +   '<input id="f-what-'+kid+'" placeholder="'+placeholder+'" aria-label="Description"></div>'
+      + (mode === 'add' ? '<select id="f-acct-'+kid+'" aria-label="Which pot"><option value="savings">into savings</option><option value="spending">into spending</option><option value="tzedakah">into tzedakah</option></select>' : '')
       + '<div class="fa"><span class="ferr" data-err="1"></span>'
       +   '<button type="button" class="btn ghost" data-cancel="1">Cancel</button>'
-      +   '<button type="submit" class="btn solid" data-save="1">'+(spend?'Record it':'Add it')+'</button></div>'
+      +   '<button type="submit" class="btn solid" data-save="1">'+(mode === 'add' ? 'Add it' : 'Record it')+'</button></div>'
       + '</form>';
   }
   function wireForm(){
@@ -779,6 +782,9 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
       if(mode === 'spend'){
         addEntry(kid, {type:'purchase', amount:amt, account:'spending', what:what || 'Spending'});
         toast('Recorded ' + fmt(amt) + (what ? ' for ' + what : '') + ' from ' + NAMES[kid] + '’s spending');
+      } else if(mode === 'give'){
+        addEntry(kid, {type:'purchase', amount:amt, account:'tzedakah', what:what || 'Tzedakah gift'});
+        toast('Recorded ' + fmt(amt) + ' given' + (what ? ' to ' + what : ' away') + ' from ' + NAMES[kid] + '’s tzedakah');
       } else {
         addEntry(kid, {type:'deposit', amount:amt, account:document.getElementById('f-acct-'+kid).value, what:what || 'Money in'});
         toast('Added ' + fmt(amt) + ' to ' + NAMES[kid] + '’s pot');
@@ -992,7 +998,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
   /* ---------------- history ---------------- */
   function entryDelta(e){ return e.type === 'purchase' ? -e.amount : e.amount; }
   function entryWhere(e){
-    if(e.type === 'purchase') return 'from spending';
+    if(e.type === 'purchase') return e.account === 'tzedakah' ? 'given away' : 'from spending';
     if(e.type === 'interest'){
       if(e.account === 'savings') return 'kept in savings';
       if(e.account === 'tzedakah') return 'set aside for giving';
@@ -1021,7 +1027,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
         b.addEventListener('click', function(){ removeEntry(b.dataset.kid, b.dataset.id); });
       });
     }
-    var spends = allEntries().filter(function(r){ return r.e.type === 'purchase' && (state.who === 'all' || r.kid === state.who); });
+    var spends = allEntries().filter(function(r){ return r.e.type === 'purchase' && r.e.account !== 'tzedakah' && (state.who === 'all' || r.kid === state.who); });
     var total = spends.reduce(function(a,r){ return a + r.e.amount; }, 0);
     var sum = document.getElementById('spentsum');
     if(!spends.length){ sum.innerHTML = 'No spending logged yet.'; return; }
