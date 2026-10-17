@@ -253,8 +253,8 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
       <div class="filters">
         <span class="seglab">Show</span>
         <span class="seg" data-role="kid" id="segKid">
-          <button data-v="zev" aria-pressed="true">Zev</button>
-          <button data-v="eve" aria-pressed="false">Eve</button>
+          <button data-v="zev" aria-pressed="true">Z</button>
+          <button data-v="eve" aria-pressed="false">E</button>
         </span>
         <span class="seglab">Looking ahead</span>
         <span class="seg" data-role="span" id="segSpan">
@@ -288,8 +288,8 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
         </span>
         <span class="seg histpart" data-role="who" id="segWho">
           <button data-v="all" aria-pressed="true">Both</button>
-          <button data-v="zev" aria-pressed="false">Zev</button>
-          <button data-v="eve" aria-pressed="false">Eve</button>
+          <button data-v="zev" aria-pressed="false">Z</button>
+          <button data-v="eve" aria-pressed="false">E</button>
         </span>
         <button class="btn ghost parentonly histpart" id="csvBtn">Save a backup</button>
         <button class="btn ghost" id="histToggle">Hide</button>
@@ -384,7 +384,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
   var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var KIDS = ['zev','eve'];
-  var NAMES = {zev:'Zev', eve:'Eve'};
+  var NAMES = {zev:'Z', eve:'E'};
   var LS = 'mama-bank:v3';
   var EXAMPLE = {zev:{savings:120, spending:15.5, tzedakah:5}, eve:{savings:95, spending:22, tzedakah:5}};
 
@@ -1065,7 +1065,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     var top = {};
     spends.forEach(function(r){ var w = r.e.what || 'Spending'; top[w] = (top[w]||0) + r.e.amount; });
     var pairs = Object.keys(top).map(function(w){ return [w, top[w]]; }).sort(function(a,b){ return b[1]-a[1]; }).slice(0,3);
-    var name = state.who === 'all' ? 'Zev and Eve have' : NAMES[state.who] + ' has';
+    var name = state.who === 'all' ? 'Z and E have' : NAMES[state.who] + ' has';
     sum.innerHTML = name + ' spent <b>'+fmt(total)+'</b> across '+spends.length+' purchase'+(spends.length===1?'':'s')
       + '. Biggest: ' + pairs.map(function(p){ return escapeHTML(p[0])+' '+fmt(p[1]); }).join(' · ') + '.';
   }
@@ -1099,7 +1099,7 @@ th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--in
     while(v < max + step*0.5){ t.push(v); v += step; }
     return t;
   }
-  /* Interest charts share one scale (0–40) so Zev and Eve are visually
+  /* Interest charts share one scale (0–40) so Z and E are visually
      comparable, and the cap only grows — by $10 steps — once a kid's
      numbers actually need the room. "Total money" keeps the old
      auto-fit scale, since balances vary far more than monthly interest. */
