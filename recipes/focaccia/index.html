@@ -25,6 +25,11 @@ body{
   background-attachment:fixed;min-height:100vh;-webkit-text-size-adjust:100%;
 }
 .wrap{max-width:680px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(14px,3vw,24px) 56px}
+.recipe-cols{display:flex;flex-direction:column}
+@media (min-width:900px){
+  .wrap{max-width:980px}
+  .recipe-cols{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);margin-bottom:18px}
 .brand svg{width:30px;height:30px;flex:none}
 .brand span{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:1.05rem}
@@ -58,29 +63,31 @@ ol.steps b{color:var(--sun-deep);font-weight:800}
   <p class="meta">Cook: 22 min</p>
   <p class="source">Source: Smitten Kitchen</p>
 
-  <section class="card">
-    <p class="eyebrow">Ingredients</p>
-    <ul class="ing">
-      <li>4 cups (520 g) flour</li>
-      <li>2 tsp salt</li>
-      <li>1 tsp instant yeast</li>
-      <li>2 cups water</li>
-      <li>4 Tbsp olive oil</li>
-      <li>Flaky sea salt</li>
-    </ul>
-  </section>
+  <div class="recipe-cols">
+    <section class="card">
+      <p class="eyebrow">Ingredients</p>
+      <ul class="ing">
+        <li>4 cups (520 g) flour</li>
+        <li>2 tsp salt</li>
+        <li>1 tsp instant yeast</li>
+        <li>2 cups water</li>
+        <li>4 Tbsp olive oil</li>
+        <li>Flaky sea salt</li>
+      </ul>
+    </section>
 
-  <section class="card">
-    <p class="eyebrow">Instructions</p>
-    <ol class="steps">
-      <li>In a large bowl, mix the <b>flour</b> (4 cups/520 g), <b>salt</b> (2 tsp), and <b>yeast</b> (1 tsp instant — important to use instant yeast, not active dry).</li>
-      <li>Add the <b>water</b> (2 cups) — lukewarm for a <b>1–1.5 hour</b> rise, or cold for an <b>8–10 hour</b> rise — and mix until a loose, sticky dough forms. No kneading needed.</li>
-      <li>Cover and let rise: at room temperature for the short rise, or in the fridge for the long rise.</li>
-      <li>Heat the oven to <b>425°F</b>. Pour 3 Tbsp of the <b>olive oil</b> onto a rimmed baking sheet and spread with your hands. Scoop the dough onto the sheet and roll it to coat in oil, then let it rest <b>20 min</b> (<b>60 min</b> if it rose in the fridge).</li>
-      <li>With oiled hands, stretch and press the dough into a rectangle filling the sheet. Drizzle with the remaining 1 Tbsp <b>olive oil</b> and sprinkle with <b>flaky sea salt</b>.</li>
-      <li>Bake <b>22 min</b> (20–25 min), until lightly golden and puffy. Cool before slicing.</li>
-    </ol>
-  </section>
+    <section class="card">
+      <p class="eyebrow">Instructions</p>
+      <ol class="steps">
+        <li>In a large bowl, mix the <b>flour</b> (4 cups/520 g), <b>salt</b> (2 tsp), and <b>yeast</b> (1 tsp instant — important to use instant yeast, not active dry).</li>
+        <li>Add the <b>water</b> (2 cups) — lukewarm for a <b>1–1.5 hour</b> rise, or cold for an <b>8–10 hour</b> rise — and mix until a loose, sticky dough forms. No kneading needed.</li>
+        <li>Cover and let rise: at room temperature for the short rise, or in the fridge for the long rise.</li>
+        <li>Heat the oven to <b>425°F</b>. Pour 3 Tbsp of the <b>olive oil</b> onto a rimmed baking sheet and spread with your hands. Scoop the dough onto the sheet and roll it to coat in oil, then let it rest <b>20 min</b> (<b>60 min</b> if it rose in the fridge).</li>
+        <li>With oiled hands, stretch and press the dough into a rectangle filling the sheet. Drizzle with the remaining 1 Tbsp <b>olive oil</b> and sprinkle with <b>flaky sea salt</b>.</li>
+        <li>Bake <b>22 min</b> (20–25 min), until lightly golden and puffy. Cool before slicing.</li>
+      </ol>
+    </section>
+  </div>
 
   <p class="tip"><b>Tip:</b> Freeze extras in a freezer bag the same day you bake — toast to thaw. Without store-bought preservatives, it won't stay fresh long at room temp.</p>
 </div>

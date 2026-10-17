@@ -7,14 +7,14 @@
 :root{
   --ground-top:#E9EFFC;--ground-bot:#FFF4DE;--paper:#FFFFFF;--paper-tint:#F5F8FF;
   --ink:#1E2350;--ink-soft:#5C6396;--ink-muted:#8B92C0;--line:#CFD9F2;
-  --sun:#FFC13B;--sun-deep:#EE9B14;--good:#0ca30c;--good-tint:#E3F3E4;
+  --sun:#FFC13B;--sun-deep:#EE9B14;--good:#0ca30c;
   --shadow:0 10px 30px rgba(30,35,80,.10);
 }
 @media (prefers-color-scheme: dark){
   :root{
     --ground-top:#0D1233;--ground-bot:#241E38;--paper:#191F45;--paper-tint:#141A3B;
     --ink:#EEF2FF;--ink-soft:#A6AFDF;--ink-muted:#7E86B8;--line:#333C74;
-    --sun:#FFCE5C;--sun-deep:#FFB021;--good:#3ecb3e;--good-tint:#1C3A22;
+    --sun:#FFCE5C;--sun-deep:#FFB021;--good:#3ecb3e;
     --shadow:0 10px 30px rgba(0,0,0,.32);
   }
 }
@@ -47,9 +47,8 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .rlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:4px 16px;margin:0}
 .rlist a{display:flex;align-items:center;gap:6px;padding:5px 0;text-decoration:none;color:var(--ink-soft);font-weight:700;font-size:.92rem;line-height:1.35}
 .rlist a:hover{color:var(--ink);text-decoration:underline}
-.rlist a.done{color:var(--ink)}
-.badge{flex:none;font-size:.62rem;font-weight:800;letter-spacing:.04em;color:var(--good);background:var(--good-tint);
-  padding:1px 7px;border-radius:999px;white-space:nowrap}
+.rlist a.done{color:var(--good);font-weight:800}
+.rlist a.done:hover{color:var(--good)}
 .ext{flex:none;color:var(--ink-muted);font-size:.78em}
 
 .foot{text-align:center;font-weight:700;font-size:.8rem;color:var(--ink-muted);margin-top:20px;line-height:1.6}
@@ -71,7 +70,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   <nav class="toc" id="toc" aria-label="Categories"></nav>
   <div id="categories"></div>
 
-  <p class="foot">Recipes marked <span class="badge" style="vertical-align:1px">UPDATED</span> have been reformatted and moved here. Everything else still opens on its original page.</p>
+  <p class="foot">Recipes shown in <span style="color:var(--good);font-weight:800">green</span> have been reformatted and moved here. Everything else still opens on its original page.</p>
 </div>
 
 <script>
@@ -90,7 +89,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       ["Biscuits", "./biscuits/"]
     ]],
     ["Mains", null, [
-      ["Weg family baked bao", "https://sites.google.com/view/qedrecipes/weg-family-bao"],
+      ["Weg family baked bao", "./weg-family-bao/"],
       ["Pesto Chicken Bake", "https://sites.google.com/view/qedrecipes/pesto-chicken-bake"],
       ["Filipino vegetable stew", "https://sites.google.com/view/qedrecipes/filipino-vegetable-stew"],
       ["Salmon Bowl in a Rice Cooker", "https://sites.google.com/view/qedrecipes/salmon-rice-cooker-bowl"],
@@ -176,7 +175,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
         ["Vanilla Cake", "https://sites.google.com/view/qedrecipes/vanilla-cake"],
         ["Chocolate Cake", "https://qedrecipes.weebly.com/chocolate-cake.html"],
         ["Raspberry Buttermilk Cake", "https://qedrecipes.weebly.com/raspberry-buttermilk-cake.html"],
-        ["Mug cake", "https://sites.google.com/view/qedrecipes/mug-cake"]
+        ["Mug cake", "./mug-cake/"]
       ]],
       ["Muffins", [
         ["Greek Yogurt Muffins", "https://sites.google.com/view/qedrecipes/greek-yogurt-muffins"],
@@ -241,7 +240,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       ["Cherry Tomato Sauce", "https://qedrecipes.weebly.com/cherry-tomato-sauce.html"]
     ]],
     ["Trial Stage Recipes", null, [
-      ["Protein bread", "https://sites.google.com/view/qedrecipes/protein-bread"],
+      ["Protein bread", "./protein-bread/"],
       ["Soup dumpling soup", "https://sites.google.com/view/qedrecipes/soup-dumpling-soup"],
       ["Chicken & Orzo Casserole", "https://sites.google.com/view/qedrecipes/chicken-orzo-casserole"],
       ["Butternut squash coconut soup", "https://sites.google.com/view/qedrecipes/butternut-squash-coconut-soup"],
@@ -287,7 +286,6 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     var internal = isInternal(href);
     var target = internal ? '' : ' target="_blank" rel="noopener"';
     return '<a href="'+href+'"'+target+(internal?' class="done"':'')+'>'
-      + (internal ? '<span class="badge">UPDATED</span>' : '')
       + '<span>'+title+(internal?'':' <span class="ext">↗</span>')+'</span>'
       + '</a>';
   }

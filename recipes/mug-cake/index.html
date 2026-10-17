@@ -1,0 +1,92 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><meta name="robots" content="index,follow"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>Mug Cake — QED Recipes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@600;800&family=Nunito:wght@600;700;800&display=swap">
+<style>
+:root{
+  --ground-top:#E9EFFC;--ground-bot:#FFF4DE;--paper:#FFFFFF;--paper-tint:#F5F8FF;
+  --ink:#1E2350;--ink-soft:#5C6396;--ink-muted:#8B92C0;--line:#CFD9F2;
+  --sun:#FFC13B;--sun-deep:#EE9B14;
+  --shadow:0 10px 30px rgba(30,35,80,.10);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ground-top:#0D1233;--ground-bot:#241E38;--paper:#191F45;--paper-tint:#141A3B;
+    --ink:#EEF2FF;--ink-soft:#A6AFDF;--ink-muted:#7E86B8;--line:#333C74;
+    --sun:#FFCE5C;--sun-deep:#FFB021;
+    --shadow:0 10px 30px rgba(0,0,0,.32);
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:"Nunito",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);background:linear-gradient(168deg,var(--ground-top) 0%,var(--ground-bot) 100%);
+  background-attachment:fixed;min-height:100vh;-webkit-text-size-adjust:100%;
+}
+.wrap{max-width:680px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(14px,3vw,24px) 56px}
+.recipe-cols{display:flex;flex-direction:column}
+@media (min-width:900px){
+  .wrap{max-width:980px}
+  .recipe-cols{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);margin-bottom:18px}
+.brand svg{width:30px;height:30px;flex:none}
+.brand span{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:1.05rem}
+.back{display:inline-block;margin-bottom:14px;font-weight:800;font-size:.84rem;color:var(--ink-soft);text-decoration:none}
+.back:hover{color:var(--ink)}
+h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clamp(1.7rem,4vw,2.3rem);margin:0 0 .2em;line-height:1.08}
+.meta{font-weight:700;color:var(--ink-soft);font-size:.92rem;margin:0 0 .3em}
+.source{font-weight:700;color:var(--ink-muted);font-size:.84rem;margin:0 0 20px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:clamp(16px,2.4vw,24px);margin-bottom:16px}
+.eyebrow{font-weight:800;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);margin:0 0 12px}
+ul.ing{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:7px}
+ul.ing li{font-weight:700;font-size:.98rem;line-height:1.4}
+ol.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:14px}
+ol.steps li{font-weight:600;font-size:1rem;line-height:1.55}
+ol.steps b{color:var(--sun-deep);font-weight:800}
+.tip{background:var(--paper-tint);border:1.5px dashed var(--line);border-radius:14px;padding:12px 16px;font-weight:700;font-size:.88rem;color:var(--ink-soft);line-height:1.5}
+.tip b{color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <a class="brand" href="../">
+    <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path d="M24 11c-5-3.3-11-3.3-16 0v23c5-3.3 11-3.3 16 0 5-3.3 11-3.3 16 0V11c-5-3.3-11-3.3-16 0z" fill="#FFC13B" stroke="#EE9B14" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M24 11v23" fill="none" stroke="#EE9B14" stroke-width="2.5"/>
+    </svg>
+    <span>QED Recipes</span>
+  </a>
+  <a class="back" href="../">← All recipes</a>
+
+  <h1>Mug Cake</h1>
+  <p class="meta">Serves 1 | Cook: 60 sec</p>
+
+  <div class="recipe-cols">
+    <section class="card">
+      <p class="eyebrow">Ingredients</p>
+      <ul class="ing">
+        <li>3 Tbsp sugar</li>
+        <li>3 Tbsp flour</li>
+        <li>1½ Tbsp cocoa powder</li>
+        <li>1 pinch salt</li>
+        <li>2 Tbsp chocolate chips, plus extra for the top</li>
+        <li>1½ Tbsp oil</li>
+        <li>3 Tbsp milk</li>
+        <li>¼ tsp vanilla extract</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <p class="eyebrow">Instructions</p>
+      <ol class="steps">
+        <li>In a 10–12 oz microwave-safe mug, mix the <b>sugar</b> (3 Tbsp), <b>flour</b> (3 Tbsp), <b>cocoa powder</b> (1½ Tbsp), and <b>salt</b> (1 pinch) with a small fork or whisk until no lumps remain. Stir in the <b>chocolate chips</b> (2 Tbsp).</li>
+        <li>Pour in the <b>oil</b> (1½ Tbsp), <b>milk</b> (3 Tbsp), and <b>vanilla extract</b> (¼ tsp). Stir gently until just combined and smooth, without overmixing.</li>
+        <li>Sprinkle a few extra chocolate chips on top.</li>
+        <li>Microwave on high for <b>60 sec</b>. A few fudgy or slightly wet spots in the center are fine; if it looks completely liquid, microwave an additional <b>10 sec</b>.</li>
+        <li>Let rest <b>2–4 min</b> to finish setting, then serve straight from the mug — with ice cream or whipped cream if you like.</li>
+      </ol>
+    </section>
+  </div>
+</div>
+</body></html>

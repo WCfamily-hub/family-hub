@@ -25,6 +25,11 @@ body{
   background-attachment:fixed;min-height:100vh;-webkit-text-size-adjust:100%;
 }
 .wrap{max-width:680px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(14px,3vw,24px) 56px}
+.recipe-cols{display:flex;flex-direction:column}
+@media (min-width:900px){
+  .wrap{max-width:980px}
+  .recipe-cols{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);margin-bottom:18px}
 .brand svg{width:30px;height:30px;flex:none}
 .brand span{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:1.05rem}
@@ -58,27 +63,29 @@ ol.steps b{color:var(--sun-deep);font-weight:800}
   <p class="meta">Serves 15 small biscuits | Cook: 12–15 min</p>
   <p class="source">Source: Smitten Kitchen</p>
 
-  <section class="card">
-    <p class="eyebrow">Ingredients</p>
-    <ul class="ing">
-      <li>250 g (2 cups) flour, all purpose</li>
-      <li>1 Tbsp baking powder</li>
-      <li>1 Tbsp sugar</li>
-      <li>1/2 tsp salt</li>
-      <li>1.5 cups (355 mL) heavy cream</li>
-    </ul>
-  </section>
+  <div class="recipe-cols">
+    <section class="card">
+      <p class="eyebrow">Ingredients</p>
+      <ul class="ing">
+        <li>250 g (2 cups) flour, all purpose</li>
+        <li>1 Tbsp baking powder</li>
+        <li>1 Tbsp sugar</li>
+        <li>1/2 tsp salt</li>
+        <li>1.5 cups (355 mL) heavy cream</li>
+      </ul>
+    </section>
 
-  <section class="card">
-    <p class="eyebrow">Instructions</p>
-    <ol class="steps">
-      <li>Preheat the oven to <b>425°F</b> and line a baking sheet with parchment paper.</li>
-      <li>Mix together the <b>flour</b> (250 g/2 cups), <b>baking powder</b> (1 Tbsp), <b>sugar</b> (1 Tbsp), and <b>salt</b> (1/2 tsp).</li>
-      <li>Add the <b>heavy cream</b> (1.5 cups) and mix into a dough — you might not need all of it, so try adding all but 1/4 cup first.</li>
-      <li>Scoop into 2" rounds with an ice cream scoop (or press the dough 3/4" thick and use a round cutter) and place on the baking sheet.</li>
-      <li>Bake <b>12–15 min</b>, until the tops are golden. Or freeze the dough rounds and bake straight from the freezer with a few extra minutes (toaster oven: <b>~400°F</b> for <b>12 min</b> fresh, <b>370°F</b> for <b>14 min</b> frozen).</li>
-    </ol>
-  </section>
+    <section class="card">
+      <p class="eyebrow">Instructions</p>
+      <ol class="steps">
+        <li>Preheat the oven to <b>425°F</b> and line a baking sheet with parchment paper.</li>
+        <li>Mix together the <b>flour</b> (250 g/2 cups), <b>baking powder</b> (1 Tbsp), <b>sugar</b> (1 Tbsp), and <b>salt</b> (1/2 tsp).</li>
+        <li>Add the <b>heavy cream</b> (1.5 cups) and mix into a dough — you might not need all of it, so try adding all but 1/4 cup first.</li>
+        <li>Scoop into 2" rounds with an ice cream scoop (or press the dough 3/4" thick and use a round cutter) and place on the baking sheet.</li>
+        <li>Bake <b>12–15 min</b>, until the tops are golden. Or freeze the dough rounds and bake straight from the freezer with a few extra minutes (toaster oven: <b>~400°F</b> for <b>12 min</b> fresh, <b>370°F</b> for <b>14 min</b> frozen).</li>
+      </ol>
+    </section>
+  </div>
 
   <p class="tip"><b>Tip:</b> These freeze well, so next time try doubling the recipe — 500 g flour, 2 Tbsp baking powder, 2 Tbsp sugar, 1 tsp salt, 3 cups cream.</p>
 </div>

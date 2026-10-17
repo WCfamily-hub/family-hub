@@ -25,6 +25,11 @@ body{
   background-attachment:fixed;min-height:100vh;-webkit-text-size-adjust:100%;
 }
 .wrap{max-width:680px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(14px,3vw,24px) 56px}
+.recipe-cols{display:flex;flex-direction:column}
+@media (min-width:900px){
+  .wrap{max-width:980px}
+  .recipe-cols{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);margin-bottom:18px}
 .brand svg{width:30px;height:30px;flex:none}
 .brand span{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:1.05rem}
@@ -57,28 +62,30 @@ ol.steps b{color:var(--sun-deep);font-weight:800}
   <h1>Easy Brownies</h1>
   <p class="meta">Cook: 25–30 min</p>
 
-  <section class="card">
-    <p class="eyebrow">Ingredients</p>
-    <ul class="ing">
-      <li>1/2 cup butter</li>
-      <li>1 cup sugar</li>
-      <li>2 eggs</li>
-      <li>1 tsp vanilla</li>
-      <li>1/3 cup cocoa powder</li>
-      <li>1/2 cup flour</li>
-      <li>1/4 tsp salt</li>
-    </ul>
-  </section>
+  <div class="recipe-cols">
+    <section class="card">
+      <p class="eyebrow">Ingredients</p>
+      <ul class="ing">
+        <li>1/2 cup butter</li>
+        <li>1 cup sugar</li>
+        <li>2 eggs</li>
+        <li>1 tsp vanilla</li>
+        <li>1/3 cup cocoa powder</li>
+        <li>1/2 cup flour</li>
+        <li>1/4 tsp salt</li>
+      </ul>
+    </section>
 
-  <section class="card">
-    <p class="eyebrow">Instructions</p>
-    <ol class="steps">
-      <li>Preheat the oven to <b>350°F</b>.</li>
-      <li>Melt the <b>butter</b> (1/2 cup) in a saucepan on the stove (use a medium saucepan if you want this to be a one-pan recipe).</li>
-      <li>Remove from heat and stir in the <b>sugar</b> (1 cup), then the <b>eggs</b> (2), then the <b>vanilla</b> (1 tsp).</li>
-      <li>Add the <b>cocoa powder</b> (1/3 cup), <b>flour</b> (1/2 cup), and <b>salt</b> (1/4 tsp) and stir to combine.</li>
-      <li>Pour into a greased 8" pan and bake <b>25–30 min</b> (or <b>~340°F</b> for <b>17 min</b> in a toaster oven).</li>
-    </ol>
-  </section>
+    <section class="card">
+      <p class="eyebrow">Instructions</p>
+      <ol class="steps">
+        <li>Preheat the oven to <b>350°F</b>.</li>
+        <li>Melt the <b>butter</b> (1/2 cup) in a saucepan on the stove (use a medium saucepan if you want this to be a one-pan recipe).</li>
+        <li>Remove from heat and stir in the <b>sugar</b> (1 cup), then the <b>eggs</b> (2), then the <b>vanilla</b> (1 tsp).</li>
+        <li>Add the <b>cocoa powder</b> (1/3 cup), <b>flour</b> (1/2 cup), and <b>salt</b> (1/4 tsp) and stir to combine.</li>
+        <li>Pour into a greased 8" pan and bake <b>25–30 min</b> (or <b>~340°F</b> for <b>17 min</b> in a toaster oven).</li>
+      </ol>
+    </section>
+  </div>
 </div>
 </body></html>
