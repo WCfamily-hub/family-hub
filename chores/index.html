@@ -82,15 +82,22 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   border:2px solid var(--kid);color:var(--kid);background:var(--paper);transition:all .15s ease;flex:none}
 .grabbtn:hover{background:var(--kid);color:#fff}
 
-/* ---- thermometers ---- */
-.thermgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.6vw,16px)}
-.thermcard{text-align:center}
-.therm{width:64px;height:auto;display:block;margin:4px auto 0}
-.thermlab{font-weight:800;font-size:.86rem;color:var(--ink-soft);margin:8px 0 0}
-.thermlab .ready{display:block;color:var(--good);font-size:.78rem;margin-top:2px}
-.thermacts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-.coinamt{text-align:center;font-family:inherit;font-weight:800;font-size:1rem;border:1.5px solid var(--line);border-radius:10px;padding:7px;background:var(--paper-tint);color:var(--ink);width:100%}
+/* ---- thermometer (inline inside each person's own card) ---- */
+.personhead{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1.5px dashed var(--line)}
+.therm{width:52px;height:auto;display:block;flex:none}
+.personmeta{flex:1;min-width:0}
+.personmeta .kidname{margin:0 0 2px}
+.thermlab{font-weight:800;font-size:.84rem;color:var(--ink-soft);margin:0}
+.thermlab .ready{display:block;color:var(--good);font-size:.76rem;margin-top:2px}
+.thermacts{display:flex;flex-direction:column;gap:7px;margin-top:9px;max-width:180px}
+.coinamt{text-align:center;font-family:inherit;font-weight:800;font-size:.95rem;border:1.5px solid var(--line);border-radius:10px;padding:6px;background:var(--paper-tint);color:var(--ink);width:100%}
 .coinicon{flex:none}
+
+/* ---- reward goal (parent-visible, not tucked in the gear sheet) ---- */
+.goalrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.goalrow label{font-weight:800;font-size:.86rem;color:var(--ink-soft)}
+.goalrow input{width:100px;font-family:inherit;font-weight:800;font-size:1.1rem;text-align:center;border:1.5px solid var(--line);border-radius:10px;padding:8px;background:var(--paper-tint);color:var(--ink)}
+.goalnote{margin:10px 0 0;font-size:.8rem;font-weight:700;color:var(--ink-muted);line-height:1.4}
 
 /* ---- chore lists ---- */
 .chorelist,.managelist,.historylist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
@@ -128,6 +135,8 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .choreform input,.choreform select{width:100%;font-family:inherit;font-weight:700;font-size:.95rem;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:9px 11px}
 .choreform .fa{display:flex;gap:8px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
 .choreform .ferr{margin-right:auto;font-weight:800;font-size:.8rem;color:var(--err)}
+.reopenrow{display:flex;align-items:flex-start;gap:8px;font-weight:700;font-size:.86rem;color:var(--ink-soft);cursor:pointer;text-transform:none;letter-spacing:normal}
+.reopenrow input{width:19px;height:19px;flex:none;margin-top:1px;accent-color:var(--good);cursor:pointer}
 
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(12px);z-index:70;
   background:var(--ink);color:var(--paper);font-weight:800;font-size:.9rem;padding:11px 20px;border-radius:999px;
@@ -147,7 +156,6 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .foot{font-size:.8rem;font-weight:700;color:var(--ink-muted);text-align:center;line-height:1.6}
 
 @media (max-width:760px){
-  .thermgrid{grid-template-columns:1fr 1fr}
   .peoplegrid{grid-template-columns:1fr}
   .chorerow{grid-template-columns:1fr;row-gap:8px}
   .cctrl{justify-content:flex-start}
@@ -194,7 +202,14 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     </button>
   </header>
 
-  <section class="thermgrid" id="thermGrid"></section>
+  <section class="card parentonly">
+    <p class="eyebrow">Reward goal</p>
+    <div class="goalrow">
+      <label for="goalInput">Coins needed per reward</label>
+      <input id="goalInput" inputmode="numeric">
+    </div>
+    <p class="goalnote">Once someone reaches this many coins, their “Redeem reward” button lights up on their card below.</p>
+  </section>
 
   <section class="card">
     <p class="eyebrow">Up for grabs</p>
@@ -231,6 +246,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
           </select>
         </div>
       </div>
+      <label class="reopenrow" id="reopenRow"><input type="checkbox" id="choreReopen"> Stays up for grabs after being completed (lets someone else — or the same person again — also do it)</label>
       <div class="fa"><span class="ferr" id="choreErr"></span>
         <button type="submit" class="btn solid">Add chore</button>
       </div>
@@ -244,11 +260,9 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 
 <div class="sheet" id="sheet" hidden>
   <h3>Settings</h3>
-  <label for="goalInput">Coins per reward</label>
-  <input id="goalInput" inputmode="numeric">
   <label for="pinInput">Parent-mode PIN (blank for none)</label>
   <input id="pinInput" inputmode="numeric" placeholder="e.g. 1234">
-  <p>Once someone reaches the coins-per-reward amount, redeem it from their card above to clear it toward the next one. The PIN only slows a curious kid down — it is not real security.</p>
+  <p>The coins-per-reward goal is set from the “Reward goal” card in parent mode. The PIN only slows a curious kid down — it is not real security.</p>
 </div>
 
 <!-- ============ Firebase: shared cross-device storage ============
@@ -318,9 +332,9 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 
   function defaultChores(){
     return {
-      'seed-dishes':    {id:'seed-dishes',    title:'Dishes',              coins:3, repeat:'daily',  assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false},
-      'seed-trash':     {id:'seed-trash',     title:'Take out trash',      coins:5, repeat:'repeat', assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false},
-      'seed-recycling': {id:'seed-recycling', title:'Take out recycling',  coins:5, repeat:'repeat', assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false}
+      'seed-dishes':    {id:'seed-dishes',    title:'Dishes',              coins:3, repeat:'daily',  reopen:true,  assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false},
+      'seed-trash':     {id:'seed-trash',     title:'Take out trash',      coins:5, repeat:'repeat', reopen:false, assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false},
+      'seed-recycling': {id:'seed-recycling', title:'Take out recycling',  coins:5, repeat:'repeat', reopen:false, assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false}
     };
   }
   function defaultPeople(){
@@ -402,8 +416,16 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       if(c.archived) return;
       c.archived = true; c.doneDate = todayISO();
     } else if(c.repeat === 'daily'){
-      if(choreDoneToday(c)) return;
-      c.doneDate = todayISO();
+      var reopens = c.reopen && !c.assignee;
+      if(reopens){
+        /* No shared "done today" flag for these — several people can each
+           complete one in a day, so the claim just resets right away and
+           nothing lingers to make the next claimer's checkbox look pre-checked. */
+        c.claimedBy = null; c.claimedDate = null;
+      } else {
+        if(choreDoneToday(c)) return;
+        c.doneDate = todayISO();
+      }
     } else {
       if(!c.assignee){ c.claimedBy = null; c.claimedDate = null; }
     }
@@ -455,9 +477,9 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     persist(); renderAll();
     toast(NAMES[person] + ' redeemed a reward!');
   }
-  function addChore(title, coins, repeat, assignee){
+  function addChore(title, coins, repeat, assignee, reopen){
     var id = uid();
-    state.chores[id] = {id:id, title:title, coins:coins, repeat:repeat, assignee:assignee || null, claimedBy:null, claimedDate:null, doneDate:null, archived:false};
+    state.chores[id] = {id:id, title:title, coins:coins, repeat:repeat, reopen:!!reopen, assignee:assignee || null, claimedBy:null, claimedDate:null, doneDate:null, archived:false};
     persist(); renderAll();
   }
   function deleteChore(id){
@@ -552,34 +574,41 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     }
     return '<polygon points="'+pts.join(' ')+'"/>';
   }
+  /* A continuous fillable column (tube + bulb together) so the fill level
+     truly maps coins/goal, 0 to 1, linearly — no false-empty bulb at 0,
+     no false-full bulb before the goal is reached. The fill itself is a
+     stack of little coins (clipped to the current level) rather than a
+     flat color, so it reads as "filling up with coins". */
   function thermSVG(person, coins, goal){
     var lvl = goal > 0 ? clamp01(coins/goal) : 0;
-    var tubeTop = 14, tubeBot = 120, tubeH = tubeBot - tubeTop;
-    var fillH = tubeH * lvl, fillY = tubeBot - fillH;
+    var top = 14, bottom = 156, vesselH = bottom - top;
+    var fillH = vesselH * lvl, fillY = bottom - fillH;
     var full = goal > 0 && coins >= goal;
-    var bubbles = '', i, cy;
-    for(i=0;i<6;i++){
-      cy = tubeBot - 10 - i*17;
-      if(cy < fillY + 6) break;
-      bubbles += '<circle cx="'+(i%2?26:34)+'" cy="'+cy.toFixed(1)+'" r="3.1" fill="#fff" opacity=".35"/>';
+    var pile = '', row, cx, cy;
+    for(row = 0; row < 22; row++){
+      cy = bottom - 4 - row * 6.6;
+      if(cy < top - 10) break;
+      cx = 30 + (row % 2 ? 2.8 : -2.8);
+      pile += '<ellipse cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" rx="7" ry="2.9" fill="#D08F2E"/>'
+            + '<ellipse cx="'+cx.toFixed(1)+'" cy="'+(cy-1.6).toFixed(1)+'" rx="7" ry="2.9" fill="#F5C063"/>';
     }
-    return '<svg class="therm" viewBox="0 0 60 160" role="img" aria-label="'+NAMES[person]+'’s reward progress">'
-      + '<defs><clipPath id="tf-'+person+'"><rect x="12" y="'+fillY.toFixed(1)+'" width="36" height="'+(fillH+44).toFixed(1)+'"/></clipPath></defs>'
-      + '<rect x="21" y="'+tubeTop+'" width="18" height="'+tubeH+'" rx="9" fill="var(--paper-tint)" stroke="var(--line)" stroke-width="3"/>'
+    return '<svg class="therm" viewBox="0 0 60 164" role="img" aria-label="'+NAMES[person]+'’s reward progress">'
+      + '<defs><clipPath id="tf-'+person+'"><rect x="8" y="'+fillY.toFixed(1)+'" width="44" height="'+(fillH+10).toFixed(1)+'"/></clipPath></defs>'
+      + '<rect x="21" y="'+top+'" width="18" height="122" rx="9" fill="var(--paper-tint)" stroke="var(--line)" stroke-width="3"/>'
       + '<circle cx="30" cy="136" r="20" fill="var(--paper-tint)" stroke="var(--line)" stroke-width="3"/>'
-      + '<g clip-path="url(#tf-'+person+')">'
-      +   '<rect x="21" y="'+tubeTop+'" width="18" height="'+tubeH+'" rx="9" fill="var(--kid)"/>'
-      +   '<circle cx="30" cy="136" r="18" fill="var(--kid)"/>'
-      +   bubbles
-      + '</g>'
-      + '<rect x="21" y="'+tubeTop+'" width="18" height="'+tubeH+'" rx="9" fill="none" stroke="var(--ink)" stroke-width="2" opacity=".18"/>'
+      + '<g clip-path="url(#tf-'+person+')">' + pile + '</g>'
+      + '<rect x="21" y="'+top+'" width="18" height="122" rx="9" fill="none" stroke="var(--ink)" stroke-width="2" opacity=".18"/>'
       + '<circle cx="30" cy="136" r="20" fill="none" stroke="var(--ink)" stroke-width="2" opacity=".18"/>'
-      + (full ? '<g fill="var(--sun)" stroke="var(--sun-deep)" stroke-width="1.5">'+star(10,14,7)+star(49,9,5)+'</g>' : '')
+      + (full ? '<g fill="var(--sun)" stroke="var(--sun-deep)" stroke-width="1.5">'+star(10,16,7)+star(49,10,5)+'</g>' : '')
       + '</svg>';
   }
 
   /* ---------------- rendering ---------------- */
-  function freqLabel(repeat){ return repeat === 'once' ? 'One-time' : repeat === 'daily' ? 'Daily' : 'Anytime'; }
+  function freqLabel(c){
+    if(c.repeat === 'once') return 'One-time';
+    if(c.repeat === 'repeat') return 'Anytime';
+    return (c.reopen && !c.assignee) ? 'Daily · multi' : 'Daily';
+  }
 
   function choreRowHTML(c, opts){
     var controls;
@@ -601,7 +630,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     var done2 = opts.context !== 'pool' && choreDoneToday(c);
     return '<li class="chorerow'+(done2?' done':'')+'">'
       + '<span class="ctitle">'+escapeHTML(c.title)+'</span>'
-      + '<span class="cbadges">'+COIN_ICON+'<span>'+c.coins+'</span><span class="freq">'+freqLabel(c.repeat)+'</span></span>'
+      + '<span class="cbadges">'+COIN_ICON+'<span>'+c.coins+'</span><span class="freq">'+freqLabel(c)+'</span></span>'
       + '<span class="cctrl">'+controls+'</span>'
       + '</li>';
   }
@@ -615,30 +644,29 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   }
   function renderPeople(){
     var host = document.getElementById('peopleGrid');
-    host.innerHTML = PEOPLE.map(function(p){
-      var items = personChores(p);
-      var body = items.length
-        ? ('<ul class="chorelist">' + items.map(function(c){ return choreRowHTML(c, {context:'person', person:p}); }).join('') + '</ul>')
-        : '<p class="empty">No chores right now.</p>';
-      return '<div class="card kid" data-kid="'+p+'"><h2 class="kidname">'+NAMES[p]+'</h2>' + body + '</div>';
-    }).join('');
-  }
-  function renderTherms(){
-    var host = document.getElementById('thermGrid');
     var parent = state.mode === 'parent';
     host.innerHTML = PEOPLE.map(function(p){
       var bal = (state.people[p] && state.people[p].coins) || 0;
       var full = state.goal > 0 && bal >= state.goal;
-      return '<div class="card kid thermcard" data-kid="'+p+'">'
-        + '<h2 class="kidname">'+NAMES[p]+'</h2>'
-        + thermSVG(p, bal, state.goal)
-        + '<p class="thermlab">'+bal+' / '+state.goal+' coins'+(full?'<span class="ready">Reward ready!</span>':'')+'</p>'
-        + (parent
-            ? ('<div class="thermacts">'
-                + '<input class="coinamt" id="coin-'+p+'" inputmode="numeric" value="'+bal+'" aria-label="'+NAMES[p]+' coin balance">'
-                + '<button class="btn" data-redeem="'+p+'"'+(full?'':' disabled')+'>Redeem reward</button>'
-                + '</div>')
-            : '')
+      var items = personChores(p);
+      var body = items.length
+        ? ('<ul class="chorelist">' + items.map(function(c){ return choreRowHTML(c, {context:'person', person:p}); }).join('') + '</ul>')
+        : '<p class="empty">No chores right now.</p>';
+      return '<div class="card kid" data-kid="'+p+'">'
+        + '<div class="personhead">'
+        +   thermSVG(p, bal, state.goal)
+        +   '<div class="personmeta">'
+        +     '<h2 class="kidname">'+NAMES[p]+'</h2>'
+        +     '<p class="thermlab">'+bal+' / '+state.goal+' coins'+(full?'<span class="ready">Reward ready!</span>':'')+'</p>'
+        +     (parent
+                ? ('<div class="thermacts">'
+                    + '<input class="coinamt" id="coin-'+p+'" inputmode="numeric" value="'+bal+'" aria-label="'+NAMES[p]+' coin balance">'
+                    + '<button class="btn" data-redeem="'+p+'"'+(full?'':' disabled')+'>Redeem reward</button>'
+                    + '</div>')
+                : '')
+        +   '</div>'
+        + '</div>'
+        + body
         + '</div>';
     }).join('');
     if(parent) PEOPLE.forEach(wireCoinInput);
@@ -665,7 +693,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
           var who = c.assignee ? NAMES[c.assignee] : (owner ? NAMES[owner]+' (grabbed)' : 'Up for grabs');
           return '<li class="managerow'+(c.archived?' done':'')+'">'
             + '<span class="ctitle">'+escapeHTML(c.title)+'</span>'
-            + '<span class="cbadges">'+COIN_ICON+'<span>'+c.coins+'</span><span class="freq">'+freqLabel(c.repeat)+'</span></span>'
+            + '<span class="cbadges">'+COIN_ICON+'<span>'+c.coins+'</span><span class="freq">'+freqLabel(c)+'</span></span>'
             + '<span class="cwho">'+who+(c.archived?' · done':'')+'</span>'
             + '<button class="del" data-delete="'+c.id+'" aria-label="Delete '+escapeHTML(c.title)+'">✕</button>'
             + '</li>';
@@ -692,7 +720,6 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   function renderAll(){
     document.getElementById('goalInput').value = state.goal;
     document.getElementById('pinInput').value = state.pin;
-    renderTherms();
     renderPool();
     renderPeople();
     renderManage();
@@ -723,18 +750,33 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     });
   }
 
+  /* The "stays up for grabs" option only makes sense for a chore left
+     up for grabs (no fixed assignee) that isn't a one-and-done task. */
+  function updateReopenVisibility(){
+    var repeat = document.getElementById('choreRepeat').value;
+    var assignee = document.getElementById('choreAssignee').value;
+    var show = assignee === '' && repeat !== 'once';
+    var row = document.getElementById('reopenRow');
+    row.hidden = !show;
+    if(!show) document.getElementById('choreReopen').checked = false;
+  }
+  document.getElementById('choreRepeat').addEventListener('change', updateReopenVisibility);
+  document.getElementById('choreAssignee').addEventListener('change', updateReopenVisibility);
+
   document.getElementById('addChoreForm').addEventListener('submit', function(e){
     e.preventDefault();
     var title = document.getElementById('choreTitle').value.trim();
     var coins = parseInt(document.getElementById('choreCoins').value, 10);
     var repeat = document.getElementById('choreRepeat').value;
     var assignee = document.getElementById('choreAssignee').value || null;
+    var reopen = document.getElementById('choreReopen').checked;
     var err = document.getElementById('choreErr');
     if(!title){ err.textContent = 'Give the chore a name'; return; }
     if(!isFinite(coins) || coins <= 0){ err.textContent = 'Set a coin value above 0'; return; }
     err.textContent = '';
-    addChore(title, coins, repeat, assignee);
+    addChore(title, coins, repeat, assignee, reopen);
     this.reset();
+    updateReopenVisibility();
     toast('Added ' + title);
   });
 
@@ -773,6 +815,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   document.getElementById('modeBtn').textContent = state.mode === 'parent' ? 'Switch to kid view' : 'Parent mode';
   markSync(false);
   wireEvents();
+  updateReopenVisibility();
   renderAll();
   connect();
 })();
