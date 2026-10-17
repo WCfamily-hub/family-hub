@@ -1,0 +1,780 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Chores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@600;800&family=Nunito:wght@600;700;800&display=swap">
+<style>
+:root{
+  --ground-top:#E9EFFC;--ground-bot:#FFF4DE;--paper:#FFFFFF;--paper-tint:#F5F8FF;
+  --ink:#1E2350;--ink-soft:#5C6396;--ink-muted:#8B92C0;--line:#CFD9F2;
+  --sun:#FFC13B;--sun-deep:#EE9B14;--good:#0ca30c;--err:#eb6834;
+  --e:#DE4E88;--e-tint:#FCE2EC;--z:#0F9E98;--z-tint:#DFF5F3;
+  --m:#D97B29;--m-tint:#FBEAD9;--b:#7C5CE0;--b-tint:#ECE6FC;
+  --shadow:0 10px 30px rgba(30,35,80,.10);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground-top:#0D1233;--ground-bot:#241E38;--paper:#191F45;--paper-tint:#141A3B;
+    --ink:#EEF2FF;--ink-soft:#A6AFDF;--ink-muted:#7E86B8;--line:#333C74;
+    --sun:#FFCE5C;--sun-deep:#FFB021;--good:#3ecb3e;--err:#d95926;
+    --e:#FF86B4;--e-tint:#432031;--z:#43D8CD;--z-tint:#0E3B39;
+    --m:#FFB066;--m-tint:#3A2712;--b:#B49CFF;--b-tint:#2A2350;
+    --shadow:0 10px 30px rgba(0,0,0,.32);
+  }
+}
+:root[data-theme="dark"]{
+  --ground-top:#0D1233;--ground-bot:#241E38;--paper:#191F45;--paper-tint:#141A3B;
+  --ink:#EEF2FF;--ink-soft:#A6AFDF;--ink-muted:#7E86B8;--line:#333C74;
+  --sun:#FFCE5C;--sun-deep:#FFB021;--good:#3ecb3e;--err:#d95926;
+  --e:#FF86B4;--e-tint:#432031;--z:#43D8CD;--z-tint:#0E3B39;
+  --m:#FFB066;--m-tint:#3A2712;--b:#B49CFF;--b-tint:#2A2350;
+  --shadow:0 10px 30px rgba(0,0,0,.32);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0;font-family:"Nunito",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);background:linear-gradient(168deg,var(--ground-top) 0%,var(--ground-bot) 100%);
+  background-attachment:fixed;min-height:100vh;-webkit-text-size-adjust:100%;
+}
+body[data-mode="kid"] .parentonly{display:none!important}
+body[data-mode="parent"] .kidonly{display:none!important}
+.wrap{max-width:1080px;margin:0 auto;padding:clamp(14px,2.4vw,30px) clamp(12px,2.4vw,28px) 56px;display:flex;flex-direction:column;gap:clamp(12px,1.8vw,20px)}
+
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mark{width:44px;height:44px;flex:none}
+h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clamp(1.6rem,3.4vw,2.4rem);margin:0;line-height:1}
+.sub{margin:.25em 0 0;font-weight:700;color:var(--ink-soft);font-size:clamp(.82rem,1.3vw,.95rem)}
+.spacer{flex:1}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font-weight:800;font-size:.76rem;color:var(--ink-soft)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--ink-muted);flex:none}
+.chip.live .dot{background:var(--good)}
+.gear{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:var(--paper);color:var(--ink-soft);display:grid;place-items:center;cursor:pointer;flex:none}
+.gear:hover{color:var(--ink)}
+
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:clamp(14px,2vw,22px)}
+.eyebrow{font-weight:800;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-muted);margin:0 0 10px}
+.btn{font-family:inherit;font-weight:800;font-size:.86rem;padding:9px 15px;border-radius:999px;cursor:pointer;
+  border:2px solid var(--line);background:var(--paper);color:var(--ink-soft);transition:all .15s ease;white-space:nowrap}
+.btn:hover{border-color:var(--kid,var(--ink-soft));color:var(--kid,var(--ink))}
+.btn.solid{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.btn.ghost{font-size:.78rem;padding:7px 12px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ---- person color theming (E / Z / M / B) ---- */
+.kid[data-kid="e"]{--kid:var(--e);--kid-tint:var(--e-tint)}
+.kid[data-kid="z"]{--kid:var(--z);--kid-tint:var(--z-tint)}
+.kid[data-kid="m"]{--kid:var(--m);--kid-tint:var(--m-tint)}
+.kid[data-kid="b"]{--kid:var(--b);--kid-tint:var(--b-tint)}
+.kid{position:relative;overflow:hidden}
+.kid::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--kid)}
+.kidname{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:1.2rem;color:var(--kid);margin:0 0 10px;letter-spacing:.03em}
+.who2[data-kid="e"]{color:var(--e);background:var(--e-tint)}
+.who2[data-kid="z"]{color:var(--z);background:var(--z-tint)}
+.who2[data-kid="m"]{color:var(--m);background:var(--m-tint)}
+.who2[data-kid="b"]{color:var(--b);background:var(--b-tint)}
+.who2{font-weight:800;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px;flex:none}
+.grabbtn[data-person="e"]{--kid:var(--e)}
+.grabbtn[data-person="z"]{--kid:var(--z)}
+.grabbtn[data-person="m"]{--kid:var(--m)}
+.grabbtn[data-person="b"]{--kid:var(--b)}
+.grabbtn{width:34px;height:34px;border-radius:50%;font-family:inherit;font-weight:800;font-size:.78rem;cursor:pointer;
+  border:2px solid var(--kid);color:var(--kid);background:var(--paper);transition:all .15s ease;flex:none}
+.grabbtn:hover{background:var(--kid);color:#fff}
+
+/* ---- thermometers ---- */
+.thermgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.6vw,16px)}
+.thermcard{text-align:center}
+.therm{width:64px;height:auto;display:block;margin:4px auto 0}
+.thermlab{font-weight:800;font-size:.86rem;color:var(--ink-soft);margin:8px 0 0}
+.thermlab .ready{display:block;color:var(--good);font-size:.78rem;margin-top:2px}
+.thermacts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.coinamt{text-align:center;font-family:inherit;font-weight:800;font-size:1rem;border:1.5px solid var(--line);border-radius:10px;padding:7px;background:var(--paper-tint);color:var(--ink);width:100%}
+.coinicon{flex:none}
+
+/* ---- chore lists ---- */
+.chorelist,.managelist,.historylist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.chorerow{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line)}
+.chorerow:last-child{border-bottom:none}
+.chorerow.done .ctitle{color:var(--ink-muted);text-decoration:line-through}
+.ctitle{font-weight:800;font-size:.98rem;min-width:0;overflow-wrap:anywhere}
+.cbadges{display:flex;align-items:center;gap:6px;white-space:nowrap;font-weight:800;color:var(--ink)}
+.freq{font-weight:800;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);background:var(--paper-tint);border-radius:999px;padding:3px 8px}
+.cctrl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.grabrow{display:flex;gap:6px}
+.donecheck{display:flex;align-items:center;gap:7px;font-weight:800;font-size:.84rem;color:var(--ink-soft);cursor:pointer}
+.donecheck input{width:21px;height:21px;accent-color:var(--good);cursor:pointer}
+.empty{font-weight:700;color:var(--ink-muted);font-size:.9rem;padding:10px 2px}
+
+.managerow{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line)}
+.managerow:last-child{border-bottom:none}
+.managerow.done .ctitle{color:var(--ink-muted);text-decoration:line-through}
+.cwho{font-weight:700;font-size:.8rem;color:var(--ink-soft);white-space:nowrap}
+.del{border:none;background:transparent;color:var(--ink-muted);cursor:pointer;font-size:1.1rem;line-height:1;padding:4px 6px;border-radius:8px;flex:none}
+.del:hover{color:var(--err);background:var(--paper-tint)}
+
+.historyrow{display:grid;grid-template-columns:auto 1fr auto auto auto;align-items:center;gap:12px;padding:10px 2px;border-bottom:1px solid var(--line)}
+.historyrow:last-child{border-bottom:none}
+.hwhat{font-weight:700;font-size:.9rem;min-width:0;overflow-wrap:anywhere}
+.hwhen{font-weight:800;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);white-space:nowrap}
+.hdelta{font-weight:800;font-size:.95rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hdelta.up{color:var(--good)}
+.hdelta.down{color:var(--err)}
+
+/* ---- add-chore form (parent) ---- */
+.choreform{background:var(--paper-tint);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:10px;margin-bottom:16px}
+.choreform .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.choreform label{display:block;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:4px}
+.choreform input,.choreform select{width:100%;font-family:inherit;font-weight:700;font-size:.95rem;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:9px 11px}
+.choreform .fa{display:flex;gap:8px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
+.choreform .ferr{margin-right:auto;font-weight:800;font-size:.8rem;color:var(--err)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(12px);z-index:70;
+  background:var(--ink);color:var(--paper);font-weight:800;font-size:.9rem;padding:11px 20px;border-radius:999px;
+  box-shadow:0 12px 30px rgba(20,25,60,.32);opacity:0;transition:opacity .2s ease,transform .2s ease;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.sheet{position:fixed;top:70px;right:calc(50% - 540px + 16px);z-index:40;width:min(300px,calc(100vw - 32px));
+  background:var(--paper);border:1.5px solid var(--line);border-radius:18px;box-shadow:0 20px 50px rgba(20,25,60,.28);padding:16px}
+@media (max-width:1120px){.sheet{right:16px}}
+.sheet h3{margin:0 0 12px;font-family:"Grandstander","Nunito",sans-serif;font-size:1rem;font-weight:800}
+.sheet label{display:block;font-size:.7rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-muted);margin:12px 0 6px}
+.sheet label:first-of-type{margin-top:0}
+.sheet input{width:100%;font-family:inherit;font-weight:800;font-size:1rem;color:var(--ink);background:var(--paper-tint);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
+.sheet p{margin:12px 0 0;font-size:.76rem;font-weight:700;color:var(--ink-muted);line-height:1.5}
+
+.peoplegrid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.8vw,20px)}
+.foot{font-size:.8rem;font-weight:700;color:var(--ink-muted);text-align:center;line-height:1.6}
+
+@media (max-width:760px){
+  .thermgrid{grid-template-columns:1fr 1fr}
+  .peoplegrid{grid-template-columns:1fr}
+  .chorerow{grid-template-columns:1fr;row-gap:8px}
+  .cctrl{justify-content:flex-start}
+  .managerow{grid-template-columns:1fr auto;row-gap:6px}
+  .historyrow{grid-template-columns:auto 1fr auto;row-gap:4px}
+  .hwhen{grid-column:1/-1;margin-left:48px}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01s!important}}
+.hubnav{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 0 0;max-width:1080px;margin:0 auto}
+.hubtab{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:.82rem;
+  padding:8px 16px;border-radius:999px;text-decoration:none;color:var(--ink-soft);background:var(--paper);
+  border:1.5px solid var(--line)}
+.hubtab.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+</style>
+
+<nav class="hubnav" aria-label="Family hub">
+  <a href="../" class="hubtab">Home</a>
+  <a href="../routine/" class="hubtab">Morning Routine</a>
+  <a href="../bank/" class="hubtab">Mama Bank</a>
+  <a href="./" class="hubtab active">Chores</a>
+  <a href="../grocery/" class="hubtab">Grocery List</a>
+  <a href="../recipes/" class="hubtab">Recipes</a>
+</nav>
+
+<div class="wrap">
+  <header class="top">
+    <svg class="mark" viewBox="0 0 48 48" aria-hidden="true">
+      <rect x="17" y="4" width="14" height="8" rx="3" fill="#FFC13B" stroke="#EE9B14" stroke-width="2.5"/>
+      <rect x="10" y="8" width="28" height="34" rx="4" fill="#FFF4DE" stroke="#EE9B14" stroke-width="3"/>
+      <path d="M15 20l4 4 7-8M15 30l4 4 7-8" fill="none" stroke="#0ca30c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <h1>Chores</h1>
+      <p class="sub">Earn coins for chores — up for grabs, or all your own</p>
+    </div>
+    <div class="spacer"></div>
+    <span class="chip parentonly" id="syncChip"><span class="dot"></span><span id="syncText">Checking…</span></span>
+    <button class="btn ghost" id="modeBtn"></button>
+    <button class="gear parentonly" id="gearBtn" aria-label="Settings">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3.2"/>
+        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.11A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.11A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6h.08A1.7 1.7 0 0 0 10.1 3.04V3a2 2 0 1 1 4 0v.11a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9v.08a1.7 1.7 0 0 0 1.56 1.03H21a2 2 0 1 1 0 4h-.11a1.7 1.7 0 0 0-1.49 1.03z"/>
+      </svg>
+    </button>
+  </header>
+
+  <section class="thermgrid" id="thermGrid"></section>
+
+  <section class="card">
+    <p class="eyebrow">Up for grabs</p>
+    <div id="poolList"></div>
+  </section>
+
+  <section class="peoplegrid" id="peopleGrid"></section>
+
+  <section class="card">
+    <p class="eyebrow">Recently completed</p>
+    <div id="historyList"></div>
+  </section>
+
+  <section class="card parentonly">
+    <p class="eyebrow">Add a chore</p>
+    <form class="choreform" id="addChoreForm" novalidate>
+      <div class="fgrid">
+        <div><label for="choreTitle">Chore</label><input id="choreTitle" placeholder="e.g. Fold laundry" autocomplete="off"></div>
+        <div><label for="choreCoins">Coins</label><input id="choreCoins" inputmode="numeric" placeholder="5"></div>
+        <div><label for="choreRepeat">Repeats</label>
+          <select id="choreRepeat">
+            <option value="once">One-time</option>
+            <option value="daily">Daily</option>
+            <option value="repeat">Anytime (unlimited)</option>
+          </select>
+        </div>
+        <div><label for="choreAssignee">Assign to</label>
+          <select id="choreAssignee">
+            <option value="">Up for grabs</option>
+            <option value="e">E</option>
+            <option value="z">Z</option>
+            <option value="m">M</option>
+            <option value="b">B</option>
+          </select>
+        </div>
+      </div>
+      <div class="fa"><span class="ferr" id="choreErr"></span>
+        <button type="submit" class="btn solid">Add chore</button>
+      </div>
+    </form>
+    <p class="eyebrow">All chores</p>
+    <div id="manageList"></div>
+  </section>
+
+  <p class="foot parentonly" id="footNote"></p>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <h3>Settings</h3>
+  <label for="goalInput">Coins per reward</label>
+  <input id="goalInput" inputmode="numeric">
+  <label for="pinInput">Parent-mode PIN (blank for none)</label>
+  <input id="pinInput" inputmode="numeric" placeholder="e.g. 1234">
+  <p>Once someone reaches the coins-per-reward amount, redeem it from their card above to clear it toward the next one. The PIN only slows a curious kid down — it is not real security.</p>
+</div>
+
+<!-- ============ Firebase: shared cross-device storage ============
+     Same family-hub Firebase project the other pages use, in its own
+     'chores/' collection. Every device signs in anonymously just to
+     satisfy the security rules — the whole family reads and writes the
+     same documents. The shim exposes a tiny `.doc(path).set()` /
+     `.onSnapshot()` surface so the rest of this page doesn't need to
+     know it's talking to Firebase. -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import {
+    getFirestore, doc, setDoc, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  import {
+    getAuth, signInAnonymously, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+  var firebaseConfig = {
+    apiKey: "AIzaSyC-3RaR0DtRUHXOs2ZziYw3rcoY0oUMFNA",
+    authDomain: "familyhub-7ce5b.firebaseapp.com",
+    projectId: "familyhub-7ce5b",
+    storageBucket: "familyhub-7ce5b.firebasestorage.app",
+    messagingSenderId: "430624150535",
+    appId: "1:430624150535:web:ee6e142bb4f33d3c9b06a2"
+  };
+
+  var app = initializeApp(firebaseConfig);
+  var firestore = getFirestore(app);
+  var auth = getAuth(app);
+
+  function makeDbShim(){
+    return {
+      doc: function(path){
+        var ref = doc(firestore, path);
+        return {
+          set: function(data){ return setDoc(ref, data); },
+          onSnapshot: function(onNext, onError){
+            return onSnapshot(ref, function(snap){
+              onNext({ exists: snap.exists(), data: function(){ return snap.data(); } });
+            }, onError);
+          }
+        };
+      }
+    };
+  }
+
+  onAuthStateChanged(auth, function(user){
+    if(user){
+      window.__familyDb = makeDbShim();
+      window.dispatchEvent(new Event('family-db-ready'));
+    }
+  });
+  signInAnonymously(auth).catch(function(){
+    window.dispatchEvent(new Event('family-db-error'));
+  });
+</script>
+
+<script>
+(function(){
+  "use strict";
+
+  var PEOPLE = ['e','z','m','b'];
+  var NAMES = {e:'E', z:'Z', m:'M', b:'B'};
+  var LS = 'family-hub:chores:v1';
+  var COIN_ICON = '<svg class="coinicon" viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><circle cx="12" cy="12" r="10" fill="#FFC13B" stroke="#EE9B14" stroke-width="2"/><circle cx="12" cy="12" r="6.2" fill="none" stroke="#EE9B14" stroke-width="1.4" opacity=".6"/></svg>';
+
+  function defaultChores(){
+    return {
+      'seed-dishes':    {id:'seed-dishes',    title:'Dishes',              coins:3, repeat:'daily',  assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false},
+      'seed-trash':     {id:'seed-trash',     title:'Take out trash',      coins:5, repeat:'repeat', assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false},
+      'seed-recycling': {id:'seed-recycling', title:'Take out recycling',  coins:5, repeat:'repeat', assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false}
+    };
+  }
+  function defaultPeople(){
+    var o = {}; PEOPLE.forEach(function(p){ o[p] = {coins:0, rewards:0}; }); return o;
+  }
+
+  var state = {
+    mode:'kid', pin:'', goal:50,
+    chores: defaultChores(), people: defaultPeople(), history: []
+  };
+
+  var db = null, writing = {}, quiet = {};
+
+  /* ---------------- helpers ---------------- */
+  function pad2(n){ return String(n).padStart(2,'0'); }
+  function todayISO(){ var d = new Date(); return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function clamp01(n){ return Math.max(0, Math.min(1, n)); }
+  function escapeHTML(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  var toastEl = null, toastTimer = null;
+  function toast(msg){
+    if(!toastEl){
+      toastEl = document.createElement('div');
+      toastEl.className = 'toast';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    requestAnimationFrame(function(){ toastEl.classList.add('on'); });
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('on'); }, 2600);
+  }
+
+  /* ---------------- chore logic ----------------
+     A chore can be permanently owned (assignee set) or left "up for
+     grabs" (assignee null, until someone claims it). 'once' chores
+     stay claimed/done forever; 'daily' pool claims only hold for the
+     current day and the done flag resets each day; 'repeat' chores
+     have no persistent done state at all — completing one instantly
+     frees it up again. */
+  function choresList(){ return Object.keys(state.chores).map(function(id){ return state.chores[id]; }); }
+  function choreOwner(c){
+    if(c.assignee) return c.assignee;
+    if(c.repeat === 'daily') return c.claimedDate === todayISO() ? c.claimedBy : null;
+    return c.claimedBy;
+  }
+  function choreDoneToday(c){
+    if(c.repeat === 'once') return c.archived;
+    if(c.repeat === 'daily') return c.doneDate === todayISO();
+    return false;
+  }
+  function poolChores(){ return choresList().filter(function(c){ return !c.archived && choreOwner(c) === null; }); }
+  function personChores(p){ return choresList().filter(function(c){ return !c.archived && choreOwner(c) === p; }); }
+
+  function grab(id, person){
+    var c = state.chores[id]; if(!c || c.assignee) return;
+    c.claimedBy = person;
+    if(c.repeat === 'daily') c.claimedDate = todayISO();
+    persist(); renderAll();
+  }
+  function release(id){
+    var c = state.chores[id]; if(!c || c.assignee) return;
+    c.claimedBy = null; c.claimedDate = null;
+    persist(); renderAll();
+  }
+  function award(person, coins){
+    state.people[person] = state.people[person] || {coins:0, rewards:0};
+    state.people[person].coins = Math.max(0, (state.people[person].coins || 0) + coins);
+  }
+  function logHistory(entry){
+    entry.id = uid(); entry.ts = Date.now(); entry.date = todayISO();
+    state.history.unshift(entry);
+    state.history = state.history.slice(0, 150);
+  }
+  function complete(id, person){
+    var c = state.chores[id]; if(!c) return;
+    if(choreOwner(c) !== person) return;
+    if(c.repeat === 'once'){
+      if(c.archived) return;
+      c.archived = true; c.doneDate = todayISO();
+    } else if(c.repeat === 'daily'){
+      if(choreDoneToday(c)) return;
+      c.doneDate = todayISO();
+    } else {
+      if(!c.assignee){ c.claimedBy = null; c.claimedDate = null; }
+    }
+    award(person, c.coins);
+    logHistory({kind:'earn', choreId:id, title:c.title, person:person, coins:c.coins});
+    persist(); renderAll();
+    toast(NAMES[person] + ' earned ' + c.coins + ' coin' + (c.coins === 1 ? '' : 's') + ' for ' + c.title);
+  }
+  function uncomplete(id, person){
+    var c = state.chores[id]; if(!c) return;
+    if(c.repeat === 'once'){
+      if(!c.archived) return;
+      c.archived = false; c.doneDate = null;
+    } else if(c.repeat === 'daily'){
+      if(!choreDoneToday(c)) return;
+      c.doneDate = null;
+    } else {
+      return;
+    }
+    award(person, -c.coins);
+    var idx = state.history.findIndex(function(h){ return h.choreId === id && h.person === person && h.kind === 'earn' && h.date === todayISO(); });
+    if(idx > -1) state.history.splice(idx, 1);
+    persist(); renderAll();
+  }
+  function undoHistory(hid){
+    var idx = state.history.findIndex(function(h){ return h.id === hid; });
+    if(idx === -1) return;
+    var h = state.history[idx];
+    award(h.person, -h.coins);
+    if(h.kind === 'earn'){
+      var c = state.chores[h.choreId];
+      if(c){
+        if(c.repeat === 'once'){ c.archived = false; c.doneDate = null; }
+        else if(c.repeat === 'daily' && c.doneDate === h.date){ c.doneDate = null; }
+      }
+    } else if(h.kind === 'redeem'){
+      state.people[h.person].rewards = Math.max(0, (state.people[h.person].rewards || 0) - 1);
+    }
+    state.history.splice(idx, 1);
+    persist(); renderAll();
+  }
+  function redeem(person){
+    var bal = (state.people[person] && state.people[person].coins) || 0;
+    if(bal < state.goal){ toast('Not enough coins yet'); return; }
+    if(!window.confirm('Redeem a reward for ' + NAMES[person] + '? This will use ' + state.goal + ' coins.')) return;
+    award(person, -state.goal);
+    state.people[person].rewards = (state.people[person].rewards || 0) + 1;
+    logHistory({kind:'redeem', person:person, coins:-state.goal, title:'Reward redeemed'});
+    persist(); renderAll();
+    toast(NAMES[person] + ' redeemed a reward!');
+  }
+  function addChore(title, coins, repeat, assignee){
+    var id = uid();
+    state.chores[id] = {id:id, title:title, coins:coins, repeat:repeat, assignee:assignee || null, claimedBy:null, claimedDate:null, doneDate:null, archived:false};
+    persist(); renderAll();
+  }
+  function deleteChore(id){
+    if(!window.confirm('Delete this chore?')) return;
+    delete state.chores[id];
+    persist(); renderAll();
+  }
+
+  /* ---------------- storage ---------------- */
+  function saveLocal(){
+    try{
+      localStorage.setItem(LS, JSON.stringify({
+        mode:state.mode, pin:state.pin, goal:state.goal,
+        chores:state.chores, people:state.people, history:state.history
+      }));
+    }catch(e){}
+  }
+  function loadLocal(){
+    try{
+      var p = JSON.parse(localStorage.getItem(LS) || 'null');
+      if(!p) return;
+      if(p.mode) state.mode = p.mode;
+      if(typeof p.pin === 'string') state.pin = p.pin;
+      if(typeof p.goal === 'number') state.goal = p.goal;
+      if(p.chores) state.chores = p.chores;
+      if(p.people) state.people = Object.assign(defaultPeople(), p.people);
+      if(Array.isArray(p.history)) state.history = p.history;
+    }catch(e){}
+  }
+  function persist(){
+    saveLocal();
+    if(!db) return;
+    writing.data = (writing.data || 0) + 1;
+    function done(){ writing.data = Math.max(0, (writing.data || 1) - 1); quiet.data = Date.now() + 2000; }
+    try{
+      db.doc('chores/data').set({chores:state.chores, people:state.people, history:state.history, v:1})
+        .then(done, function(){ done(); toast('Could not save to your account — kept on this device'); });
+    }catch(e){ done(); }
+  }
+  function persistSettings(){
+    saveLocal();
+    if(!db) return;
+    writing.settings = true;
+    try{
+      db.doc('chores/settings').set({goal:state.goal, pin:state.pin})
+        .then(function(){ writing.settings = false; }, function(){ writing.settings = false; });
+    }catch(e){ writing.settings = false; }
+  }
+
+  /* ---------------- cross-device sync ---------------- */
+  function connect(){
+    function wireUp(){
+      db = window.__familyDb; markSync(true);
+      db.doc('chores/settings').onSnapshot(function(s){
+        if(writing.settings) return;
+        if(!s.exists){ persistSettings(); return; }
+        var d = s.data() || {};
+        if(typeof d.goal === 'number') state.goal = d.goal;
+        if(typeof d.pin === 'string') state.pin = d.pin;
+        saveLocal(); renderAll();
+      }, function(){});
+      db.doc('chores/data').onSnapshot(function(s){
+        if(writing.data > 0 || Date.now() < (quiet.data || 0)) return;
+        if(!s.exists){ persist(); return; }
+        var d = s.data() || {};
+        if(d.chores) state.chores = d.chores;
+        if(d.people) state.people = Object.assign(defaultPeople(), d.people);
+        if(Array.isArray(d.history)) state.history = d.history;
+        saveLocal(); renderAll();
+      }, function(){ toast('Lost the connection to your account — still saving on this device'); });
+    }
+    window.addEventListener('family-db-ready', wireUp);
+    window.addEventListener('family-db-error', function(){ markSync(false); });
+    if(window.__familyDb) wireUp(); else markSync(false);
+  }
+  function markSync(live){
+    var chip = document.getElementById('syncChip');
+    chip.classList.toggle('live', !!live);
+    document.getElementById('syncText').textContent = live ? 'Synced across devices' : 'Saved on this device only';
+    document.getElementById('footNote').textContent = live
+      ? 'Saved to the family hub — open it on any device and chores and coins follow.'
+      : 'Could not connect just now, so this is saved in this browser only.';
+  }
+
+  /* ---------------- thermometer art ---------------- */
+  function star(cx, cy, r){
+    var pts = [], i, ang, rad;
+    for(i=0;i<10;i++){
+      ang = (Math.PI/5)*i - Math.PI/2;
+      rad = (i%2===0) ? r : r*0.44;
+      pts.push((cx+Math.cos(ang)*rad).toFixed(1)+','+(cy+Math.sin(ang)*rad).toFixed(1));
+    }
+    return '<polygon points="'+pts.join(' ')+'"/>';
+  }
+  function thermSVG(person, coins, goal){
+    var lvl = goal > 0 ? clamp01(coins/goal) : 0;
+    var tubeTop = 14, tubeBot = 120, tubeH = tubeBot - tubeTop;
+    var fillH = tubeH * lvl, fillY = tubeBot - fillH;
+    var full = goal > 0 && coins >= goal;
+    var bubbles = '', i, cy;
+    for(i=0;i<6;i++){
+      cy = tubeBot - 10 - i*17;
+      if(cy < fillY + 6) break;
+      bubbles += '<circle cx="'+(i%2?26:34)+'" cy="'+cy.toFixed(1)+'" r="3.1" fill="#fff" opacity=".35"/>';
+    }
+    return '<svg class="therm" viewBox="0 0 60 160" role="img" aria-label="'+NAMES[person]+'’s reward progress">'
+      + '<defs><clipPath id="tf-'+person+'"><rect x="12" y="'+fillY.toFixed(1)+'" width="36" height="'+(fillH+44).toFixed(1)+'"/></clipPath></defs>'
+      + '<rect x="21" y="'+tubeTop+'" width="18" height="'+tubeH+'" rx="9" fill="var(--paper-tint)" stroke="var(--line)" stroke-width="3"/>'
+      + '<circle cx="30" cy="136" r="20" fill="var(--paper-tint)" stroke="var(--line)" stroke-width="3"/>'
+      + '<g clip-path="url(#tf-'+person+')">'
+      +   '<rect x="21" y="'+tubeTop+'" width="18" height="'+tubeH+'" rx="9" fill="var(--kid)"/>'
+      +   '<circle cx="30" cy="136" r="18" fill="var(--kid)"/>'
+      +   bubbles
+      + '</g>'
+      + '<rect x="21" y="'+tubeTop+'" width="18" height="'+tubeH+'" rx="9" fill="none" stroke="var(--ink)" stroke-width="2" opacity=".18"/>'
+      + '<circle cx="30" cy="136" r="20" fill="none" stroke="var(--ink)" stroke-width="2" opacity=".18"/>'
+      + (full ? '<g fill="var(--sun)" stroke="var(--sun-deep)" stroke-width="1.5">'+star(10,14,7)+star(49,9,5)+'</g>' : '')
+      + '</svg>';
+  }
+
+  /* ---------------- rendering ---------------- */
+  function freqLabel(repeat){ return repeat === 'once' ? 'One-time' : repeat === 'daily' ? 'Daily' : 'Anytime'; }
+
+  function choreRowHTML(c, opts){
+    var controls;
+    if(opts.context === 'pool'){
+      controls = '<div class="grabrow">' + PEOPLE.map(function(p){
+        return '<button class="grabbtn" data-grab="'+c.id+'" data-person="'+p+'" title="'+NAMES[p]+' grabs this" aria-label="'+NAMES[p]+' grabs this">'+NAMES[p]+'</button>';
+      }).join('') + '</div>';
+    } else {
+      var person = opts.person, done = choreDoneToday(c), fromPool = !c.assignee;
+      if(c.repeat === 'repeat'){
+        controls = '<button class="btn solid" data-complete="'+c.id+'" data-person="'+person+'">Mark done</button>';
+      } else {
+        controls = '<label class="donecheck"><input type="checkbox" data-toggle="'+c.id+'" data-person="'+person+'"'+(done?' checked':'')+'> Done</label>';
+      }
+      if(fromPool && !done){
+        controls += '<button class="btn ghost" data-release="'+c.id+'">Let go</button>';
+      }
+    }
+    var done2 = opts.context !== 'pool' && choreDoneToday(c);
+    return '<li class="chorerow'+(done2?' done':'')+'">'
+      + '<span class="ctitle">'+escapeHTML(c.title)+'</span>'
+      + '<span class="cbadges">'+COIN_ICON+'<span>'+c.coins+'</span><span class="freq">'+freqLabel(c.repeat)+'</span></span>'
+      + '<span class="cctrl">'+controls+'</span>'
+      + '</li>';
+  }
+
+  function renderPool(){
+    var host = document.getElementById('poolList');
+    var items = poolChores();
+    host.innerHTML = items.length
+      ? ('<ul class="chorelist">' + items.map(function(c){ return choreRowHTML(c, {context:'pool'}); }).join('') + '</ul>')
+      : '<p class="empty">Nothing up for grabs right now.</p>';
+  }
+  function renderPeople(){
+    var host = document.getElementById('peopleGrid');
+    host.innerHTML = PEOPLE.map(function(p){
+      var items = personChores(p);
+      var body = items.length
+        ? ('<ul class="chorelist">' + items.map(function(c){ return choreRowHTML(c, {context:'person', person:p}); }).join('') + '</ul>')
+        : '<p class="empty">No chores right now.</p>';
+      return '<div class="card kid" data-kid="'+p+'"><h2 class="kidname">'+NAMES[p]+'</h2>' + body + '</div>';
+    }).join('');
+  }
+  function renderTherms(){
+    var host = document.getElementById('thermGrid');
+    var parent = state.mode === 'parent';
+    host.innerHTML = PEOPLE.map(function(p){
+      var bal = (state.people[p] && state.people[p].coins) || 0;
+      var full = state.goal > 0 && bal >= state.goal;
+      return '<div class="card kid thermcard" data-kid="'+p+'">'
+        + '<h2 class="kidname">'+NAMES[p]+'</h2>'
+        + thermSVG(p, bal, state.goal)
+        + '<p class="thermlab">'+bal+' / '+state.goal+' coins'+(full?'<span class="ready">Reward ready!</span>':'')+'</p>'
+        + (parent
+            ? ('<div class="thermacts">'
+                + '<input class="coinamt" id="coin-'+p+'" inputmode="numeric" value="'+bal+'" aria-label="'+NAMES[p]+' coin balance">'
+                + '<button class="btn" data-redeem="'+p+'"'+(full?'':' disabled')+'>Redeem reward</button>'
+                + '</div>')
+            : '')
+        + '</div>';
+    }).join('');
+    if(parent) PEOPLE.forEach(wireCoinInput);
+  }
+  function wireCoinInput(p){
+    var el = document.getElementById('coin-'+p);
+    if(!el) return;
+    el.addEventListener('change', function(){
+      var n = parseInt(this.value, 10);
+      if(!isFinite(n) || n < 0) n = 0;
+      state.people[p] = state.people[p] || {coins:0, rewards:0};
+      state.people[p].coins = n;
+      persist(); renderAll();
+    });
+  }
+  function renderManage(){
+    var host = document.getElementById('manageList');
+    var open = choresList().filter(function(c){ return !c.archived; });
+    var done = choresList().filter(function(c){ return c.archived; });
+    var items = open.concat(done);
+    host.innerHTML = items.length
+      ? ('<ul class="managelist">' + items.map(function(c){
+          var owner = choreOwner(c);
+          var who = c.assignee ? NAMES[c.assignee] : (owner ? NAMES[owner]+' (grabbed)' : 'Up for grabs');
+          return '<li class="managerow'+(c.archived?' done':'')+'">'
+            + '<span class="ctitle">'+escapeHTML(c.title)+'</span>'
+            + '<span class="cbadges">'+COIN_ICON+'<span>'+c.coins+'</span><span class="freq">'+freqLabel(c.repeat)+'</span></span>'
+            + '<span class="cwho">'+who+(c.archived?' · done':'')+'</span>'
+            + '<button class="del" data-delete="'+c.id+'" aria-label="Delete '+escapeHTML(c.title)+'">✕</button>'
+            + '</li>';
+        }).join('') + '</ul>')
+      : '<p class="empty">No chores yet — add one above.</p>';
+  }
+  function renderHistory(){
+    var host = document.getElementById('historyList');
+    var items = state.history.slice(0, 20);
+    host.innerHTML = items.length
+      ? ('<ul class="historylist">' + items.map(function(h){
+          var when = h.date === todayISO() ? 'Today' : h.date;
+          var sign = h.coins >= 0 ? '+' : '';
+          return '<li class="historyrow">'
+            + '<span class="who2" data-kid="'+h.person+'">'+NAMES[h.person]+'</span>'
+            + '<span class="hwhat">'+escapeHTML(h.title)+'</span>'
+            + '<span class="hwhen">'+when+'</span>'
+            + '<span class="hdelta '+(h.coins>=0?'up':'down')+'">'+sign+h.coins+'</span>'
+            + '<button class="del" data-undo="'+h.id+'" aria-label="Undo">✕</button>'
+            + '</li>';
+        }).join('') + '</ul>')
+      : '<p class="empty">Nothing completed yet.</p>';
+  }
+  function renderAll(){
+    document.getElementById('goalInput').value = state.goal;
+    document.getElementById('pinInput').value = state.pin;
+    renderTherms();
+    renderPool();
+    renderPeople();
+    renderManage();
+    renderHistory();
+  }
+
+  /* ---------------- events (delegated — safe across re-renders) ---------------- */
+  function wireEvents(){
+    document.body.addEventListener('click', function(e){
+      var g = e.target.closest('[data-grab]');
+      if(g){ grab(g.dataset.grab, g.dataset.person); return; }
+      var r = e.target.closest('[data-release]');
+      if(r){ release(r.dataset.release); return; }
+      var m = e.target.closest('[data-complete]');
+      if(m){ complete(m.dataset.complete, m.dataset.person); return; }
+      var d = e.target.closest('[data-delete]');
+      if(d){ deleteChore(d.dataset.delete); return; }
+      var u = e.target.closest('[data-undo]');
+      if(u){ undoHistory(u.dataset.undo); return; }
+      var rd = e.target.closest('[data-redeem]');
+      if(rd){ redeem(rd.dataset.redeem); return; }
+    });
+    document.body.addEventListener('change', function(e){
+      var t = e.target.closest('[data-toggle]');
+      if(!t) return;
+      if(t.checked) complete(t.dataset.toggle, t.dataset.person);
+      else uncomplete(t.dataset.toggle, t.dataset.person);
+    });
+  }
+
+  document.getElementById('addChoreForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var title = document.getElementById('choreTitle').value.trim();
+    var coins = parseInt(document.getElementById('choreCoins').value, 10);
+    var repeat = document.getElementById('choreRepeat').value;
+    var assignee = document.getElementById('choreAssignee').value || null;
+    var err = document.getElementById('choreErr');
+    if(!title){ err.textContent = 'Give the chore a name'; return; }
+    if(!isFinite(coins) || coins <= 0){ err.textContent = 'Set a coin value above 0'; return; }
+    err.textContent = '';
+    addChore(title, coins, repeat, assignee);
+    this.reset();
+    toast('Added ' + title);
+  });
+
+  /* ---------------- mode / settings ---------------- */
+  function setMode(m){
+    state.mode = m;
+    document.body.setAttribute('data-mode', m);
+    document.getElementById('modeBtn').textContent = m === 'parent' ? 'Switch to kid view' : 'Parent mode';
+    saveLocal(); renderAll();
+  }
+  document.getElementById('modeBtn').addEventListener('click', function(){
+    if(state.mode === 'parent'){ setMode('kid'); return; }
+    if(state.pin){
+      var tries = window.prompt('Parent PIN');
+      if(tries === null) return;
+      if(tries.trim() !== state.pin){ window.alert('That PIN does not match.'); return; }
+    }
+    setMode('parent');
+  });
+  var sheet = document.getElementById('sheet');
+  document.getElementById('gearBtn').addEventListener('click', function(e){ e.stopPropagation(); sheet.hidden = !sheet.hidden; });
+  document.addEventListener('click', function(e){ if(!sheet.hidden && !sheet.contains(e.target)) sheet.hidden = true; });
+  document.getElementById('goalInput').addEventListener('change', function(){
+    var n = parseInt(this.value, 10);
+    if(isFinite(n) && n > 0){ state.goal = n; persistSettings(); renderAll(); }
+    this.value = state.goal;
+  });
+  document.getElementById('pinInput').addEventListener('change', function(){
+    state.pin = this.value.replace(/\s/g,'');
+    persistSettings();
+  });
+
+  /* ---------------- init ---------------- */
+  loadLocal();
+  document.body.setAttribute('data-mode', state.mode);
+  document.getElementById('modeBtn').textContent = state.mode === 'parent' ? 'Switch to kid view' : 'Parent mode';
+  markSync(false);
+  wireEvents();
+  renderAll();
+  connect();
+})();
+</script>
+</body></html>
