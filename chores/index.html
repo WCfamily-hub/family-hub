@@ -81,6 +81,8 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .grabbtn{width:34px;height:34px;border-radius:50%;font-family:inherit;font-weight:800;font-size:.78rem;cursor:pointer;
   border:2px solid var(--kid);color:var(--kid);background:var(--paper);transition:all .15s ease;flex:none}
 .grabbtn:hover{background:var(--kid);color:#fff}
+.grabbtn:disabled{opacity:.35;cursor:not-allowed}
+.grabbtn:disabled:hover{background:var(--paper);color:var(--kid)}
 
 /* ---- thermometer (inline inside each person's own card) ---- */
 .personhead{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;padding-bottom:12px;border-bottom:1.5px dashed var(--line)}
@@ -246,7 +248,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
           </select>
         </div>
       </div>
-      <label class="reopenrow" id="reopenRow"><input type="checkbox" id="choreReopen"> Stays up for grabs after being completed (lets someone else — or the same person again — also do it)</label>
+      <label class="reopenrow" id="reopenRow"><input type="checkbox" id="choreReopen"> Stays up for grabs after being completed (each person gets one turn a day; resets daily)</label>
       <div class="fa"><span class="ferr" id="choreErr"></span>
         <button type="submit" class="btn solid">Add chore</button>
       </div>
@@ -332,9 +334,9 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 
   function defaultChores(){
     return {
-      'seed-dishes':    {id:'seed-dishes',    title:'Dishes',              coins:3, repeat:'daily',  reopen:true,  assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false},
-      'seed-trash':     {id:'seed-trash',     title:'Take out trash',      coins:5, repeat:'repeat', reopen:false, assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false},
-      'seed-recycling': {id:'seed-recycling', title:'Take out recycling',  coins:5, repeat:'repeat', reopen:false, assignee:null, claimedBy:null, claimedDate:null, doneDate:null, archived:false}
+      'seed-dishes':    {id:'seed-dishes',    title:'Dishes',              coins:3, repeat:'daily',  reopen:true,  assignee:null, claimedBy:null, claimedDate:null, doneDate:null, doneBy:{}, archived:false},
+      'seed-trash':     {id:'seed-trash',     title:'Take out trash',      coins:5, repeat:'repeat', reopen:false, assignee:null, claimedBy:null, claimedDate:null, doneDate:null, doneBy:{}, archived:false},
+      'seed-recycling': {id:'seed-recycling', title:'Take out recycling',  coins:5, repeat:'repeat', reopen:false, assignee:null, claimedBy:null, claimedDate:null, doneDate:null, doneBy:{}, archived:false}
     };
   }
   function defaultPeople(){
@@ -386,11 +388,16 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     if(c.repeat === 'daily') return c.doneDate === todayISO();
     return false;
   }
+  /* For a "stays up for grabs" daily chore, each person gets their own
+     once-a-day turn — several different people can each do it, but the
+     same person can't claim a second turn until tomorrow. */
+  function didToday(c, person){ return !!(c.doneBy && c.doneBy[person] === todayISO()); }
   function poolChores(){ return choresList().filter(function(c){ return !c.archived && choreOwner(c) === null; }); }
   function personChores(p){ return choresList().filter(function(c){ return !c.archived && choreOwner(c) === p; }); }
 
   function grab(id, person){
     var c = state.chores[id]; if(!c || c.assignee) return;
+    if(c.repeat === 'daily' && c.reopen && didToday(c, person)) return;
     c.claimedBy = person;
     if(c.repeat === 'daily') c.claimedDate = todayISO();
     persist(); renderAll();
@@ -418,9 +425,13 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     } else if(c.repeat === 'daily'){
       var reopens = c.reopen && !c.assignee;
       if(reopens){
-        /* No shared "done today" flag for these — several people can each
-           complete one in a day, so the claim just resets right away and
-           nothing lingers to make the next claimer's checkbox look pre-checked. */
+        if(didToday(c, person)) return;
+        c.doneBy = c.doneBy || {};
+        c.doneBy[person] = todayISO();
+        /* The claim resets right away rather than leaving a shared "done
+           today" flag — that let a leftover flag from this person's turn
+           make the NEXT claimer's checkbox look pre-checked. Per-person
+           turns are tracked separately above instead. */
         c.claimedBy = null; c.claimedDate = null;
       } else {
         if(choreDoneToday(c)) return;
@@ -459,7 +470,13 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       var c = state.chores[h.choreId];
       if(c){
         if(c.repeat === 'once'){ c.archived = false; c.doneDate = null; }
-        else if(c.repeat === 'daily' && c.doneDate === h.date){ c.doneDate = null; }
+        else if(c.repeat === 'daily'){
+          if(c.reopen && !c.assignee){
+            if(c.doneBy && c.doneBy[h.person] === h.date) delete c.doneBy[h.person];
+          } else if(c.doneDate === h.date){
+            c.doneDate = null;
+          }
+        }
       }
     } else if(h.kind === 'redeem'){
       state.people[h.person].rewards = Math.max(0, (state.people[h.person].rewards || 0) - 1);
@@ -479,7 +496,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   }
   function addChore(title, coins, repeat, assignee, reopen){
     var id = uid();
-    state.chores[id] = {id:id, title:title, coins:coins, repeat:repeat, reopen:!!reopen, assignee:assignee || null, claimedBy:null, claimedDate:null, doneDate:null, archived:false};
+    state.chores[id] = {id:id, title:title, coins:coins, repeat:repeat, reopen:!!reopen, assignee:assignee || null, claimedBy:null, claimedDate:null, doneDate:null, doneBy:{}, archived:false};
     persist(); renderAll();
   }
   function deleteChore(id){
@@ -634,14 +651,17 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   function freqLabel(c){
     if(c.repeat === 'once') return 'One-time';
     if(c.repeat === 'repeat') return 'Anytime';
-    return (c.reopen && !c.assignee) ? 'Daily · multi' : 'Daily';
+    return (c.reopen && !c.assignee) ? 'Daily · 1 turn each' : 'Daily';
   }
 
   function choreRowHTML(c, opts){
     var controls;
     if(opts.context === 'pool'){
+      var multi = c.repeat === 'daily' && c.reopen;
       controls = '<div class="grabrow">' + PEOPLE.map(function(p){
-        return '<button class="grabbtn" data-grab="'+c.id+'" data-person="'+p+'" title="'+NAMES[p]+' grabs this" aria-label="'+NAMES[p]+' grabs this">'+NAMES[p]+'</button>';
+        var done = multi && didToday(c, p);
+        var label = done ? (NAMES[p]+' already did this today') : (NAMES[p]+' grabs this');
+        return '<button class="grabbtn" data-grab="'+c.id+'" data-person="'+p+'" title="'+label+'" aria-label="'+label+'"'+(done?' disabled':'')+'>'+NAMES[p]+'</button>';
       }).join('') + '</div>';
     } else {
       var person = opts.person, done = choreDoneToday(c), fromPool = !c.assignee;
