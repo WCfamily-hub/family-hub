@@ -587,6 +587,20 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     var bottom = bulbCy + bulbR, vesselH = bottom - top;
     var fillH = vesselH * lvl, fillY = bottom - fillH;
     var full = goal > 0 && coins >= goal;
+
+    /* One continuous outline — rounded top, straight sides, flaring into
+       the bulb at the point where the sides are tangent to its circle —
+       instead of a separate rect-plus-circle, which left the circle's
+       own stroke crossing through the tube as a visible seam. */
+    var topR = tubeW / 2;
+    var tangentDY = Math.sqrt(Math.max(0, bulbR*bulbR - topR*topR));
+    var tangentY = bulbCy - tangentDY;
+    var vessel = 'M'+tubeX+' '+(top+topR)
+      + ' A'+topR+' '+topR+' 0 0 1 '+(tubeX+tubeW)+' '+(top+topR)
+      + ' L'+(tubeX+tubeW)+' '+tangentY.toFixed(2)
+      + ' A'+bulbR+' '+bulbR+' 0 1 1 '+tubeX+' '+tangentY.toFixed(2)
+      + ' Z';
+
     var pile = '', row, cx, cy;
     for(row = 0; row < 26; row++){
       cy = bottom - 6 - row * 6.8;
@@ -597,19 +611,20 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     }
     var ticks = '', i, ty;
     for(i = 1; i <= 4; i++){
-      ty = top + ((bulbCy - top) / 5) * i;
+      ty = top + ((tangentY - top) / 5) * i;
       ticks += '<path d="M'+(tubeX+tubeW)+' '+ty.toFixed(1)+'h6" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" opacity=".4"/>';
     }
     return '<svg class="therm" viewBox="0 0 80 176" role="img" aria-label="'+NAMES[person]+'’s reward progress">'
-      + '<defs><clipPath id="tf-'+person+'"><rect x="5" y="'+fillY.toFixed(1)+'" width="60" height="'+(fillH+12).toFixed(1)+'"/></clipPath></defs>'
+      + '<defs>'
+      +   '<clipPath id="tv-'+person+'"><path d="'+vessel+'"/></clipPath>'
+      +   '<clipPath id="tf-'+person+'"><rect x="5" y="'+fillY.toFixed(1)+'" width="60" height="'+(fillH+12).toFixed(1)+'"/></clipPath>'
+      + '</defs>'
       + (full ? '<circle cx="35" cy="'+bulbCy+'" r="'+(bulbR+12)+'" fill="var(--kid)" opacity=".2"/>' : '')
-      + '<rect x="'+tubeX+'" y="'+top+'" width="'+tubeW+'" height="'+(bulbCy-top)+'" rx="'+(tubeW/2)+'" fill="var(--paper-tint)"/>'
-      + '<circle cx="35" cy="'+bulbCy+'" r="'+bulbR+'" fill="var(--paper-tint)"/>'
+      + '<path d="'+vessel+'" fill="var(--paper-tint)"/>'
       + ticks
-      + '<g clip-path="url(#tf-'+person+')">' + pile + '</g>'
-      + '<rect x="'+tubeX+'" y="'+top+'" width="'+tubeW+'" height="'+(bulbCy-top)+'" rx="'+(tubeW/2)+'" fill="none" stroke="var(--ink)" stroke-width="3" opacity=".55"/>'
-      + '<circle cx="35" cy="'+bulbCy+'" r="'+bulbR+'" fill="none" stroke="var(--ink)" stroke-width="3" opacity=".55"/>'
-      + '<rect x="'+(tubeX+4)+'" y="'+(top+8)+'" width="4" height="'+(bulbCy-top-16)+'" rx="2" fill="#fff" opacity=".4"/>'
+      + '<g clip-path="url(#tv-'+person+')"><g clip-path="url(#tf-'+person+')">' + pile + '</g></g>'
+      + '<path d="'+vessel+'" fill="none" stroke="var(--ink)" stroke-width="3" opacity=".55"/>'
+      + '<rect x="'+(tubeX+4)+'" y="'+(top+8)+'" width="4" height="'+(tangentY-top-12).toFixed(1)+'" rx="2" fill="#fff" opacity=".4"/>'
       + '<path d="M18 '+(bulbCy-14)+'a16 16 0 0 1 10 -17" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".35"/>'
       + (full ? '<g fill="var(--sun)" stroke="var(--sun-deep)" stroke-width="1.7">'+star(12,10,9)+star(60,6,7)+star(38,-6,6)+'</g>' : '')
       + '</svg>';
