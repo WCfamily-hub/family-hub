@@ -495,12 +495,23 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       return;
     }
     document.getElementById('gotEyebrow').textContent = 'Got it (' + checked.length + ')';
-    var staples = checked.filter(function(it){ return it.staple; }).sort(function(a,b){ return a.name.localeCompare(b.name); });
-    var oneoffs = checked.filter(function(it){ return !it.staple; }).sort(function(a,b){ return (a.checkedAt||'').localeCompare(b.checkedAt||''); });
-    var html = '<ul class="glist">'
-      + staples.map(function(it){ return itemRowHTML(it, true); }).join('')
-      + oneoffs.map(function(it){ return itemRowHTML(it, true); }).join('')
-      + '</ul>';
+    var bySection = {};
+    checked.forEach(function(it){ (bySection[it.section] = bySection[it.section] || []).push(it); });
+    var html = '';
+    SECTION_ORDER.forEach(function(sec){
+      var list = bySection[sec];
+      if(!list || !list.length) return;
+      /* within a section, staples come first (alphabetical); one-off items
+         sink to the bottom (oldest-checked first), since those quietly
+         drop off 90 days after being checked off and staples don't */
+      list.sort(function(a,b){
+        if(a.staple !== b.staple) return a.staple ? -1 : 1;
+        if(a.staple) return a.name.localeCompare(b.name);
+        return (a.checkedAt||'').localeCompare(b.checkedAt||'');
+      });
+      html += '<p class="seclabel">'+SECTION_LABEL[sec]+'</p>'
+        + '<ul class="glist">' + list.map(function(it){ return itemRowHTML(it, true); }).join('') + '</ul>';
+    });
     host.innerHTML = html;
     wireRows(host);
   }
