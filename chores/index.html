@@ -83,8 +83,8 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .grabbtn:hover{background:var(--kid);color:#fff}
 
 /* ---- thermometer (inline inside each person's own card) ---- */
-.personhead{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1.5px dashed var(--line)}
-.therm{width:52px;height:auto;display:block;flex:none}
+.personhead{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;padding-bottom:12px;border-bottom:1.5px dashed var(--line)}
+.therm{width:74px;height:auto;display:block;flex:none;filter:drop-shadow(0 6px 10px rgba(30,35,80,.16))}
 .personmeta{flex:1;min-width:0}
 .personmeta .kidname{margin:0 0 2px}
 .thermlab{font-weight:800;font-size:.84rem;color:var(--ink-soft);margin:0}
@@ -578,28 +578,42 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
      truly maps coins/goal, 0 to 1, linearly — no false-empty bulb at 0,
      no false-full bulb before the goal is reached. The fill itself is a
      stack of little coins (clipped to the current level) rather than a
-     flat color, so it reads as "filling up with coins". */
+     flat color, so it reads as "filling up with coins". A metal cap,
+     tick marks, and a glass highlight dress it up; reaching the goal
+     adds a soft glow in the person's color plus a burst of stars. */
   function thermSVG(person, coins, goal){
     var lvl = goal > 0 ? clamp01(coins/goal) : 0;
-    var top = 14, bottom = 156, vesselH = bottom - top;
+    var top = 16, tubeX = 25, tubeW = 20, bulbCy = 136, bulbR = 26;
+    var bottom = bulbCy + bulbR, vesselH = bottom - top;
     var fillH = vesselH * lvl, fillY = bottom - fillH;
     var full = goal > 0 && coins >= goal;
     var pile = '', row, cx, cy;
-    for(row = 0; row < 22; row++){
-      cy = bottom - 4 - row * 6.6;
+    for(row = 0; row < 26; row++){
+      cy = bottom - 5 - row * 6.8;
       if(cy < top - 10) break;
-      cx = 30 + (row % 2 ? 2.8 : -2.8);
-      pile += '<ellipse cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" rx="7" ry="2.9" fill="#D08F2E"/>'
-            + '<ellipse cx="'+cx.toFixed(1)+'" cy="'+(cy-1.6).toFixed(1)+'" rx="7" ry="2.9" fill="#F5C063"/>';
+      cx = 35 + (row % 2 ? 3.4 : -3.4);
+      pile += '<ellipse cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" rx="8.4" ry="3.5" fill="#D08F2E"/>'
+            + '<ellipse cx="'+cx.toFixed(1)+'" cy="'+(cy-1.9).toFixed(1)+'" rx="8.4" ry="3.5" fill="#F5C063"/>';
     }
-    return '<svg class="therm" viewBox="0 0 60 164" role="img" aria-label="'+NAMES[person]+'’s reward progress">'
-      + '<defs><clipPath id="tf-'+person+'"><rect x="8" y="'+fillY.toFixed(1)+'" width="44" height="'+(fillH+10).toFixed(1)+'"/></clipPath></defs>'
-      + '<rect x="21" y="'+top+'" width="18" height="122" rx="9" fill="var(--paper-tint)" stroke="var(--line)" stroke-width="3"/>'
-      + '<circle cx="30" cy="136" r="20" fill="var(--paper-tint)" stroke="var(--line)" stroke-width="3"/>'
+    var ticks = '', i, ty;
+    for(i = 1; i <= 5; i++){
+      ty = top + ((bulbCy - top) / 6) * i;
+      ticks += '<path d="M'+(tubeX+tubeW)+' '+ty.toFixed(1)+'h5" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" opacity=".22"/>';
+    }
+    return '<svg class="therm" viewBox="0 0 78 182" role="img" aria-label="'+NAMES[person]+'’s reward progress">'
+      + '<defs><clipPath id="tf-'+person+'"><rect x="5" y="'+fillY.toFixed(1)+'" width="60" height="'+(fillH+12).toFixed(1)+'"/></clipPath></defs>'
+      + (full ? '<circle cx="35" cy="'+bulbCy+'" r="'+(bulbR+12)+'" fill="var(--kid)" opacity=".2"/>' : '')
+      + '<rect x="'+(tubeX+2)+'" y="2" width="'+(tubeW-4)+'" height="16" rx="7" fill="#5B5A8A"/>'
+      + '<rect x="'+(tubeX+5)+'" y="5" width="'+(tubeW-14)+'" height="5" rx="2.5" fill="#8482B8"/>'
+      + '<rect x="'+tubeX+'" y="'+top+'" width="'+tubeW+'" height="'+(bulbCy-top)+'" rx="'+(tubeW/2)+'" fill="var(--paper-tint)" stroke="var(--line)" stroke-width="3"/>'
+      + '<circle cx="35" cy="'+bulbCy+'" r="'+bulbR+'" fill="var(--paper-tint)" stroke="var(--line)" stroke-width="3"/>'
+      + ticks
       + '<g clip-path="url(#tf-'+person+')">' + pile + '</g>'
-      + '<rect x="21" y="'+top+'" width="18" height="122" rx="9" fill="none" stroke="var(--ink)" stroke-width="2" opacity=".18"/>'
-      + '<circle cx="30" cy="136" r="20" fill="none" stroke="var(--ink)" stroke-width="2" opacity=".18"/>'
-      + (full ? '<g fill="var(--sun)" stroke="var(--sun-deep)" stroke-width="1.5">'+star(10,16,7)+star(49,10,5)+'</g>' : '')
+      + '<rect x="'+tubeX+'" y="'+top+'" width="'+tubeW+'" height="'+(bulbCy-top)+'" rx="'+(tubeW/2)+'" fill="none" stroke="var(--ink)" stroke-width="2" opacity=".2"/>'
+      + '<circle cx="35" cy="'+bulbCy+'" r="'+bulbR+'" fill="none" stroke="var(--ink)" stroke-width="2" opacity=".2"/>'
+      + '<rect x="'+(tubeX+4)+'" y="'+(top+6)+'" width="4" height="'+(bulbCy-top-14)+'" rx="2" fill="#fff" opacity=".45"/>'
+      + '<path d="M18 '+(bulbCy-14)+'a16 16 0 0 1 10 -17" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".4"/>'
+      + (full ? '<g fill="var(--sun)" stroke="var(--sun-deep)" stroke-width="1.7">'+star(12,10,9)+star(60,6,7)+star(38,-6,6)+'</g>' : '')
       + '</svg>';
   }
 
@@ -649,9 +663,9 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       var bal = (state.people[p] && state.people[p].coins) || 0;
       var full = state.goal > 0 && bal >= state.goal;
       var items = personChores(p);
-      var body = items.length
+      var body = '<p class="eyebrow">Tasks claimed</p>' + (items.length
         ? ('<ul class="chorelist">' + items.map(function(c){ return choreRowHTML(c, {context:'person', person:p}); }).join('') + '</ul>')
-        : '<p class="empty">No chores right now.</p>';
+        : '<p class="empty">No chores right now.</p>');
       return '<div class="card kid" data-kid="'+p+'">'
         + '<div class="personhead">'
         +   thermSVG(p, bal, state.goal)
