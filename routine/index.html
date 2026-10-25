@@ -390,7 +390,7 @@ h1{
 .sheet h2{margin:0 0 4px;font-family:"Grandstander","Nunito",sans-serif;font-size:1.05rem;font-weight:800}
 .sheet p{margin:0 0 12px;font-size:.82rem;color:var(--ink-soft);font-weight:600;line-height:1.4}
 .sheet label{display:block;font-size:.7rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
-.sheet select,.sheet button.act{
+.sheet select,.sheet input[type="date"],.sheet button.act{
   width:100%;font-family:inherit;font-weight:700;font-size:.92rem;color:var(--ink);
   background:var(--paper-tint);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;
 }
@@ -530,17 +530,9 @@ h1{
   <h2>Grown-up controls</h2>
   <p>Checks save automatically and start fresh each morning.</p>
   <label for="daySel">Show the list for</label>
-  <select id="daySel">
-    <option value="auto">Today</option>
-    <option value="1">Monday</option>
-    <option value="2">Tuesday</option>
-    <option value="3">Wednesday</option>
-    <option value="4">Thursday</option>
-    <option value="5">Friday</option>
-    <option value="6">Saturday</option>
-    <option value="0">Sunday</option>
-  </select>
-  <button class="act" id="resetBtn">Clear today's checks</button>
+  <input type="date" id="daySel">
+  <button class="act" id="todayBtn">Jump to today</button>
+  <button class="act" id="resetBtn">Clear this day's checks</button>
   <div class="sync" id="syncNote"><span class="dot"></span><span id="syncText">Connecting…</span></div>
 </div>
 
@@ -875,7 +867,7 @@ h1{
   }
 
   /* ---------------- state ---------------- */
-  var override = null;              // day-of-week number, or null for today
+  var override = null;              // a Date, or null for today
   var plan = null;
   var state = {zev:{}, eve:{}};
   var db = null, unsub = null, adopting = false;
@@ -883,11 +875,7 @@ h1{
   var booting = true;
 
   function effectiveDate(){
-    var now = new Date();
-    if(override === null) return now;
-    var d = new Date(now.getTime());
-    d.setDate(d.getDate() + ((override - now.getDay() + 7) % 7));
-    return d;
+    return override ? new Date(override.getTime()) : new Date();
   }
   function lsKey(){ return 'morning-routine:' + plan.key; }
   function readLocal(){
@@ -1332,6 +1320,7 @@ h1{
     document.getElementById('todayLabel').textContent = plan.headline;
     document.getElementById('rewardText').firstChild.nodeValue = plan.reward;
     document.getElementById('rewardNote').textContent = plan.note;
+    document.getElementById('daySel').value = ymd(effectiveDate());
   }
 
   function commit(kid, id, li, wasOn){
@@ -1546,7 +1535,16 @@ h1{
     if(!sheet.hidden && !sheet.contains(e.target)) sheet.hidden = true;
   });
   document.getElementById('daySel').addEventListener('change', function(){
-    override = this.value === 'auto' ? null : Number(this.value);
+    if(!this.value){ override = null; loadDay(); return; }
+    /* parse the "YYYY-MM-DD" input value into a local date by hand —
+       `new Date(this.value)` parses it as UTC midnight, which rolls back
+       a day in any timezone west of UTC. */
+    var parts = this.value.split('-').map(Number);
+    override = new Date(parts[0], parts[1] - 1, parts[2]);
+    loadDay();
+  });
+  document.getElementById('todayBtn').addEventListener('click', function(){
+    override = null;
     loadDay();
   });
   document.getElementById('resetBtn').addEventListener('click', function(){
