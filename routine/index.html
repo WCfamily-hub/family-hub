@@ -553,7 +553,8 @@ h1{
   var CHINESE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/' + CHINESE_SHEET_ID + '/edit?gid=' + CHINESE_GID;
   var MATH_SHEET_URL = 'https://docs.google.com/spreadsheets/d/' + MATH_SHEET_ID + '/edit?gid=' + MATH_GID;
 
-  var homeworkToday = null; /* {chinese: string|null, math: string|null} once resolved */
+  var homeworkFor = null;   /* {chinese: string|null, math: string|null} for whichever date was last looked up */
+  var homeworkReqId = 0;    /* guards against an older in-flight lookup overwriting a newer one */
 
   function sheetsUrl(path, params){
     var qs = Object.keys(params).map(function(k){ return k + '=' + encodeURIComponent(params[k]); }).join('&');
@@ -690,27 +691,34 @@ h1{
     var body = li.querySelector('.tbody');
     if(!body) return;
     Array.prototype.forEach.call(body.querySelectorAll('[data-role="homework-detail"]'), function(el){ el.remove(); });
-    var hw = homeworkToday || {};
+    var hw = homeworkFor || {};
     body.appendChild(homeworkLine('Math', hw.math, MATH_SHEET_URL));
     body.appendChild(homeworkLine('Chinese', hw.chinese, CHINESE_SHEET_URL));
   }
 
-  function loadHomework(){
-    /* render the links immediately so they're there even if the lookup
-       below is slow, fails, or finds nothing for today */
+  /* Looks up homework for whatever date is passed in — real "today" on a
+     normal visit, or whatever day the Grown-up controls date picker is
+     currently showing. Re-runs each time the viewed date changes, since a
+     past or future day's entry is a different sheet row than today's. */
+  function loadHomeworkFor(date){
+    var reqId = ++homeworkReqId;
+    homeworkFor = null;
+    /* render the bare links immediately so they're there even if the
+       lookup below is slow, fails, or finds nothing for this date */
     applyHomeworkDetail();
-    var today = new Date();
     Promise.all([
-      getSheetValues(CHINESE_SHEET_ID, CHINESE_GID).then(function(rows){ return findTodaysEntry(rows, today); }).catch(function(){ return null; }),
-      getSheetValues(MATH_SHEET_ID, MATH_GID).then(function(rows){ return findTodaysEntry(rows, today); }).catch(function(){ return null; })
+      getSheetValues(CHINESE_SHEET_ID, CHINESE_GID).then(function(rows){ return findTodaysEntry(rows, date); }).catch(function(){ return null; }),
+      getSheetValues(MATH_SHEET_ID, MATH_GID).then(function(rows){ return findTodaysEntry(rows, date); }).catch(function(){ return null; })
     ]).then(function(results){
-      homeworkToday = {chinese: results[0], math: results[1]};
+      if(reqId !== homeworkReqId) return;   /* a newer date was picked before this resolved */
+      homeworkFor = {chinese: results[0], math: results[1]};
       applyHomeworkDetail();
     });
   }
 
   window.__applyHomeworkDetail = applyHomeworkDetail;
-  loadHomework();
+  window.__loadHomeworkFor = loadHomeworkFor;
+  loadHomeworkFor(new Date());
 })();
 </script>
 
@@ -1367,7 +1375,8 @@ h1{
     state = readLocal();
     wasDone = {zev:false, eve:false};
     buildLists();
-    if(window.__applyHomeworkDetail) window.__applyHomeworkDetail();
+    if(window.__loadHomeworkFor) window.__loadHomeworkFor(effectiveDate());
+    else if(window.__applyHomeworkDetail) window.__applyHomeworkDetail();
     paintPlan();
     render();
     booting = false;
