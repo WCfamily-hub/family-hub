@@ -388,6 +388,27 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     }
     return out;
   }
+  /* Picks up to 3 distinct ideas, favoring ones we already have ingredients
+     for: if any "ready" idea exists in the pool, one is guaranteed among the
+     picks, and the remaining slots are drawn from a pool where ready ideas
+     are 3x as likely to be chosen - still a mix, not an all-ready lock. */
+  function pickSpinResult(pool){
+    var ready = pool.filter(function(it){ return it.hasIngredients; });
+    var notReady = pool.filter(function(it){ return !it.hasIngredients; });
+    var picks = [];
+    if(ready.length){
+      picks.push(ready.splice(Math.floor(Math.random()*ready.length), 1)[0]);
+    }
+    var weighted = [];
+    ready.forEach(function(it){ weighted.push(it, it, it); });
+    notReady.forEach(function(it){ weighted.push(it); });
+    while(picks.length < 3 && weighted.length){
+      var chosen = weighted[Math.floor(Math.random()*weighted.length)];
+      weighted = weighted.filter(function(it){ return it !== chosen; });
+      picks.push(chosen);
+    }
+    return shuffled(picks);
+  }
   function resetReels(){
     document.querySelectorAll('.reel').forEach(function(el){
       el.classList.remove('empty', 'ready');
@@ -436,7 +457,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     spinning = true;
     document.getElementById('spinBtn').disabled = true;
     var names = pool.map(function(it){ return it.name; });
-    var picks = shuffled(pool).slice(0, 3);
+    var picks = pickSpinResult(pool);
     var durations = [900, 1250, 1650];
     var remaining = 3;
     [0,1,2].forEach(function(idx){
