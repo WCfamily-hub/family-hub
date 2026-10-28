@@ -75,11 +75,12 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .filters{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
 .reels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 16px}
 .reel{background:var(--paper-tint);border:2px solid var(--line);border-radius:16px;min-height:92px;
-  display:flex;align-items:center;justify-content:center;padding:10px 8px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 8px;text-align:center;
   box-shadow:inset 0 2px 6px rgba(30,35,80,.08)}
 .reel.empty{border-style:dashed;opacity:.55}
 .reel-text{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clamp(.88rem,2.6vw,1.1rem);
   color:var(--ink);line-height:1.25;word-break:break-word}
+.reel-ing{font-weight:700;font-size:.72rem;color:var(--ink-muted);line-height:1.35;word-break:break-word}
 .spin-row{display:flex;justify-content:center}
 .spin-btn{font-size:1rem;padding:13px 32px;min-height:50px}
 .spin-hint{text-align:center;margin:12px 0 0;font-weight:700;color:var(--ink-muted);font-size:.84rem}
@@ -88,6 +89,8 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .addrow{display:grid;grid-template-columns:1fr auto;gap:10px}
 .addrow input{width:100%;font-family:inherit;font-weight:700;font-size:1rem;color:var(--ink);background:var(--paper-tint);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px}
 .addopts{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.ming-input{width:100%;font-family:inherit;font-weight:700;font-size:.92rem;color:var(--ink);background:var(--paper-tint);
+  border:1.5px solid var(--line);border-radius:12px;padding:10px 13px;margin-top:10px}
 
 /* ---------------- list ---------------- */
 .seclabel{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:.9rem;color:var(--ink-muted);
@@ -104,10 +107,14 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .macts{display:flex;align-items:center;gap:4px;flex:none}
 .iconbtn{border:none;background:transparent;color:var(--ink-muted);cursor:pointer;font-size:1rem;line-height:1;padding:5px 7px;border-radius:8px}
 .iconbtn:hover{color:var(--ink);background:var(--paper)}
+.ming{margin:6px 0 0;font-weight:700;font-size:.78rem;color:var(--ink-muted);line-height:1.4}
 
 .editpanel{margin-top:10px;padding-top:10px;border-top:1.5px dashed var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .editpanel select{font-family:inherit;font-weight:700;font-size:.88rem;color:var(--ink);background:var(--paper);
   border:1.5px solid var(--line);border-radius:10px;padding:8px 10px}
+.editpanel .ming-field{flex:1;min-width:180px;display:flex;flex-direction:column;gap:4px}
+.editpanel .ming-field input{font-family:inherit;font-weight:700;font-size:.88rem;color:var(--ink);background:var(--paper);
+  border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;width:100%}
 .editpanel .fa{margin-left:auto}
 
 .empty{font-weight:700;color:var(--ink-muted);font-size:.9rem;padding:14px 4px}
@@ -170,9 +177,9 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       </span>
     </div>
     <div class="reels" id="reels">
-      <div class="reel" data-reel="0"><span class="reel-text">?</span></div>
-      <div class="reel" data-reel="1"><span class="reel-text">?</span></div>
-      <div class="reel" data-reel="2"><span class="reel-text">?</span></div>
+      <div class="reel" data-reel="0"><span class="reel-text">?</span><span class="reel-ing" hidden></span></div>
+      <div class="reel" data-reel="1"><span class="reel-text">?</span><span class="reel-ing" hidden></span></div>
+      <div class="reel" data-reel="2"><span class="reel-text">?</span><span class="reel-ing" hidden></span></div>
     </div>
     <div class="spin-row">
       <button class="btn solid spin-btn" id="spinBtn">Spin!</button>
@@ -196,6 +203,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       </span>
       <label class="remember"><input type="checkbox" id="addHasIngredients"> Have ingredients</label>
     </div>
+    <input id="addIngredients" class="ming-input" placeholder="Main ingredients needed (optional) — e.g. ground beef, tortillas, cheese" aria-label="Main ingredients needed" autocomplete="off">
   </section>
 
   <section class="card">
@@ -348,9 +356,9 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   }
 
   /* ---------------- mutations ---------------- */
-  function addIdea(name, mealType, hasIngredients){
+  function addIdea(name, mealType, hasIngredients, ingredients){
     state.ideas.push({
-      id: uid(), name: name, mealType: mealType, hasIngredients: !!hasIngredients
+      id: uid(), name: name, mealType: mealType, hasIngredients: !!hasIngredients, ingredients: ingredients || ''
     });
     persist(); renderAll();
   }
@@ -382,6 +390,8 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     document.querySelectorAll('.reel').forEach(function(el){
       el.classList.remove('empty');
       el.querySelector('.reel-text').textContent = '?';
+      var ingEl = el.querySelector('.reel-ing');
+      ingEl.hidden = true; ingEl.textContent = '';
     });
     document.getElementById('spinBtn').textContent = 'Spin!';
   }
@@ -430,9 +440,15 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     [0,1,2].forEach(function(idx){
       var reelEl = document.querySelector('.reel[data-reel="'+idx+'"]');
       var textEl = reelEl.querySelector('.reel-text');
+      var ingEl = reelEl.querySelector('.reel-ing');
       var finalIdea = picks[idx];
       reelEl.classList.toggle('empty', !finalIdea);
+      ingEl.hidden = true; ingEl.textContent = '';
       spinReel(textEl, finalIdea ? finalIdea.name : '—', durations[idx], names, function(){
+        if(finalIdea && finalIdea.ingredients){
+          ingEl.textContent = finalIdea.ingredients;
+          ingEl.hidden = false;
+        }
         remaining--;
         if(remaining === 0){
           spinning = false;
@@ -454,10 +470,11 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       +     (it.hasIngredients ? '✓ Have it' : 'Need items')
       +   '</button>'
       +   '<span class="macts">'
-      +     '<button class="iconbtn" data-edit="'+it.id+'" title="Change meal type" aria-label="Change meal type for '+escapeHTML(it.name)+'">✎</button>'
+      +     '<button class="iconbtn" data-edit="'+it.id+'" title="Edit" aria-label="Edit '+escapeHTML(it.name)+'">✎</button>'
       +     '<button class="iconbtn" data-del="'+it.id+'" title="Remove" aria-label="Remove '+escapeHTML(it.name)+'">×</button>'
       +   '</span>'
       + '</div>'
+      + (it.ingredients ? '<p class="ming">'+escapeHTML(it.ingredients)+'</p>' : '')
       + (open ? editPanelHTML(it) : '')
       + '</li>';
   }
@@ -467,6 +484,9 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     }).join('');
     return '<div class="editpanel" data-editpanel="'+it.id+'">'
       +   '<label class="seglab">Meal <select data-field="mealtype">'+opts+'</select></label>'
+      +   '<label class="seglab ming-field">Main ingredients'
+      +     '<input type="text" data-field="ingredients" value="'+escapeHTML(it.ingredients||'')+'" placeholder="e.g. ground beef, tortillas, cheese">'
+      +   '</label>'
       +   '<button type="button" class="btn ghost fa" data-editclose="1">Close</button>'
       + '</div>';
   }
@@ -510,6 +530,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     if(panel){
       var id = panel.dataset.editpanel;
       panel.querySelector('[data-field="mealtype"]').addEventListener('change', function(){ updateIdea(id, {mealType: this.value}); });
+      panel.querySelector('[data-field="ingredients"]').addEventListener('change', function(){ updateIdea(id, {ingredients: this.value.trim()}); });
       panel.querySelector('[data-editclose]').addEventListener('click', function(e){
         e.stopPropagation(); state.editId = null; renderAll();
       });
@@ -543,8 +564,10 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     var name = input.value.trim();
     if(!name) return;
     var hasIngredients = document.getElementById('addHasIngredients').checked;
-    addIdea(name, state.addMealType, hasIngredients);
+    var ingredientsInput = document.getElementById('addIngredients');
+    addIdea(name, state.addMealType, hasIngredients, ingredientsInput.value.trim());
     input.value = '';
+    ingredientsInput.value = '';
     document.getElementById('addHasIngredients').checked = false;
     input.focus();
   });
