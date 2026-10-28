@@ -1,0 +1,563 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Meal Ideas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@600;800&family=Nunito:wght@600;700;800&display=swap">
+<style>
+:root{
+  --ground-top:#E9EFFC;--ground-bot:#FFF4DE;--paper:#FFFFFF;--paper-tint:#F5F8FF;
+  --ink:#1E2350;--ink-soft:#5C6396;--ink-muted:#8B92C0;--line:#CFD9F2;--grid:#E6EBF8;
+  --sun:#FFC13B;--sun-deep:#EE9B14;--good:#0ca30c;--good-tint:#DFF5DC;
+  --breakfast:#EE9B14;--breakfast-tint:#FDEFD3;--lunch:#0ca30c;--lunch-tint:#DFF5DC;
+  --dinner:#5B3DE0;--dinner-tint:#E7E1FC;--snack:#E0532E;--snack-tint:#FBE3DB;
+  --shadow:0 10px 30px rgba(30,35,80,.10);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground-top:#0D1233;--ground-bot:#241E38;--paper:#191F45;--paper-tint:#141A3B;
+    --ink:#EEF2FF;--ink-soft:#A6AFDF;--ink-muted:#7E86B8;--line:#333C74;--grid:#2A3260;
+    --sun:#FFCE5C;--sun-deep:#FFB021;--good:#3ecb3e;--good-tint:#163A1A;
+    --breakfast:#FFB021;--breakfast-tint:#3A2E14;--lunch:#3ecb3e;--lunch-tint:#163A1A;
+    --dinner:#9480F0;--dinner-tint:#28204A;--snack:#F07B5A;--snack-tint:#3A241C;
+    --shadow:0 10px 30px rgba(0,0,0,.32);
+  }
+}
+:root[data-theme="dark"]{
+  --ground-top:#0D1233;--ground-bot:#241E38;--paper:#191F45;--paper-tint:#141A3B;
+  --ink:#EEF2FF;--ink-soft:#A6AFDF;--ink-muted:#7E86B8;--line:#333C74;--grid:#2A3260;
+  --sun:#FFCE5C;--sun-deep:#FFB021;--good:#3ecb3e;--good-tint:#163A1A;
+  --breakfast:#FFB021;--breakfast-tint:#3A2E14;--lunch:#3ecb3e;--lunch-tint:#163A1A;
+  --dinner:#9480F0;--dinner-tint:#28204A;--snack:#F07B5A;--snack-tint:#3A241C;
+  --shadow:0 10px 30px rgba(0,0,0,.32);
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0;font-family:"Nunito",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);background:linear-gradient(168deg,var(--ground-top) 0%,var(--ground-bot) 100%);
+  background-attachment:fixed;min-height:100vh;-webkit-text-size-adjust:100%;
+}
+.wrap{max-width:860px;margin:0 auto;padding:clamp(14px,2.4vw,30px) clamp(12px,2.4vw,28px) 56px;display:flex;flex-direction:column;gap:clamp(12px,1.8vw,20px)}
+
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mark{width:44px;height:44px;flex:none}
+h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clamp(1.6rem,3.4vw,2.4rem);margin:0;line-height:1}
+.sub{margin:.25em 0 0;font-weight:700;color:var(--ink-soft);font-size:clamp(.82rem,1.3vw,.95rem)}
+.spacer{flex:1}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font-weight:800;font-size:.76rem;color:var(--ink-soft)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--ink-muted);flex:none}
+.chip.live .dot{background:var(--good)}
+
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:clamp(14px,2vw,22px)}
+.eyebrow{font-weight:800;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-muted);margin:0 0 10px}
+
+/* ---------------- shared controls ---------------- */
+.seg{display:inline-flex;background:var(--paper-tint);border:1.5px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{font-family:inherit;font-weight:800;font-size:.82rem;color:var(--ink-soft);background:transparent;border:none;padding:7px 14px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.seg button[aria-pressed="true"][data-v="breakfast"]{background:var(--breakfast)}
+.seg button[aria-pressed="true"][data-v="lunch"]{background:var(--lunch)}
+.seg button[aria-pressed="true"][data-v="dinner"]{background:var(--dinner)}
+.seg button[aria-pressed="true"][data-v="snack"]{background:var(--snack)}
+.seglab{font-weight:800;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
+
+.btn{font-family:inherit;font-weight:800;font-size:.86rem;padding:9px 15px;border-radius:999px;cursor:pointer;
+  border:2px solid var(--line);background:var(--paper);color:var(--ink-soft);transition:all .15s ease;white-space:nowrap}
+.btn:hover{border-color:var(--ink-soft);color:var(--ink)}
+.btn.solid{background:var(--ink);border-color:var(--ink);color:var(--paper);min-height:46px;padding:11px 20px}
+.btn.solid:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{font-size:.78rem;padding:7px 12px}
+.remember{display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:.84rem;color:var(--ink-soft);cursor:pointer;user-select:none}
+.remember input{width:16px;height:16px;accent-color:var(--sun-deep)}
+
+/* ---------------- spinner ---------------- */
+.filters{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.reels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 16px}
+.reel{background:var(--paper-tint);border:2px solid var(--line);border-radius:16px;min-height:92px;
+  display:flex;align-items:center;justify-content:center;padding:10px 8px;text-align:center;
+  box-shadow:inset 0 2px 6px rgba(30,35,80,.08)}
+.reel.empty{border-style:dashed;opacity:.55}
+.reel-text{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clamp(.88rem,2.6vw,1.1rem);
+  color:var(--ink);line-height:1.25;word-break:break-word}
+.spin-row{display:flex;justify-content:center}
+.spin-btn{font-size:1rem;padding:13px 32px;min-height:50px}
+.spin-hint{text-align:center;margin:12px 0 0;font-weight:700;color:var(--ink-muted);font-size:.84rem}
+
+/* ---------------- add idea ---------------- */
+.addrow{display:grid;grid-template-columns:1fr auto;gap:10px}
+.addrow input{width:100%;font-family:inherit;font-weight:700;font-size:1rem;color:var(--ink);background:var(--paper-tint);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px}
+.addopts{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+
+/* ---------------- list ---------------- */
+.seclabel{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:.9rem;color:var(--ink-muted);
+  letter-spacing:.06em;text-transform:uppercase;margin:16px 0 8px}
+.seclabel:first-child{margin-top:0}
+.seclabel .count{font-weight:700;text-transform:none;letter-spacing:0;color:var(--ink-muted);font-size:.78rem}
+.mlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mitem{background:var(--paper-tint);border-radius:14px;padding:10px 14px}
+.mrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mname{flex:1;min-width:120px;font-weight:700;font-size:1rem;overflow-wrap:anywhere}
+.ready-chip{font-family:inherit;font-weight:800;font-size:.7rem;letter-spacing:.03em;padding:6px 12px;border-radius:999px;
+  border:1.5px solid var(--line);background:var(--paper);color:var(--ink-muted);cursor:pointer;white-space:nowrap;flex:none}
+.ready-chip[data-ready="true"]{background:var(--good-tint);color:var(--good);border-color:var(--good)}
+.macts{display:flex;align-items:center;gap:4px;flex:none}
+.iconbtn{border:none;background:transparent;color:var(--ink-muted);cursor:pointer;font-size:1rem;line-height:1;padding:5px 7px;border-radius:8px}
+.iconbtn:hover{color:var(--ink);background:var(--paper)}
+
+.editpanel{margin-top:10px;padding-top:10px;border-top:1.5px dashed var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.editpanel select{font-family:inherit;font-weight:700;font-size:.88rem;color:var(--ink);background:var(--paper);
+  border:1.5px solid var(--line);border-radius:10px;padding:8px 10px}
+.editpanel .fa{margin-left:auto}
+
+.empty{font-weight:700;color:var(--ink-muted);font-size:.9rem;padding:14px 4px}
+.gothead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(12px);z-index:70;
+  background:var(--ink);color:var(--paper);font-weight:800;font-size:.9rem;padding:11px 20px;border-radius:999px;
+  box-shadow:0 12px 30px rgba(20,25,60,.32);opacity:0;transition:opacity .2s ease,transform .2s ease;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:600px){
+  .addrow{grid-template-columns:1fr}
+  .addrow .btn.solid{width:100%}
+  .reel-text{font-size:.82rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01s!important}}
+.hubnav{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 0 0;max-width:860px;margin:0 auto}
+.hubtab{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:.82rem;
+  padding:8px 16px;border-radius:999px;text-decoration:none;color:var(--ink-soft);background:var(--paper);
+  border:1.5px solid var(--line)}
+.hubtab.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+</style>
+
+<nav class="hubnav" aria-label="Family hub">
+  <a href="../" class="hubtab">Home</a>
+  <a href="../routine/" class="hubtab">Morning Routine</a>
+  <a href="../bank/" class="hubtab">Mama Bank</a>
+  <a href="../chores/" class="hubtab">Chores</a>
+  <a href="../grocery/" class="hubtab">Grocery List</a>
+  <a href="./" class="hubtab active">Meal Ideas</a>
+  <a href="../recipes/" class="hubtab">Recipes</a>
+</nav>
+
+<div class="wrap">
+  <header class="top">
+    <svg class="mark" viewBox="0 0 48 48" aria-hidden="true">
+      <rect x="7" y="7" width="34" height="34" rx="7" fill="#FFF4DE" stroke="#EE9B14" stroke-width="3"/>
+      <circle cx="16" cy="16" r="3" fill="#EE9B14"/>
+      <circle cx="32" cy="16" r="3" fill="#EE9B14"/>
+      <circle cx="24" cy="24" r="3" fill="#EE9B14"/>
+      <circle cx="16" cy="32" r="3" fill="#EE9B14"/>
+      <circle cx="32" cy="32" r="3" fill="#EE9B14"/>
+    </svg>
+    <div>
+      <h1>Meal Ideas</h1>
+      <p class="sub">Not sure what to make? Give it a spin.</p>
+    </div>
+    <div class="spacer"></div>
+    <span class="chip" id="syncChip"><span class="dot"></span><span id="syncText">Checking…</span></span>
+  </header>
+
+  <section class="card">
+    <div class="filters">
+      <span class="seglab">Meal</span>
+      <span class="seg" data-role="filter" id="mealTypeFilter">
+        <button data-v="breakfast" aria-pressed="false">Breakfast</button>
+        <button data-v="lunch" aria-pressed="false">Lunch</button>
+        <button data-v="dinner" aria-pressed="true">Dinner</button>
+        <button data-v="snack" aria-pressed="false">Snack</button>
+      </span>
+    </div>
+    <div class="reels" id="reels">
+      <div class="reel" data-reel="0"><span class="reel-text">?</span></div>
+      <div class="reel" data-reel="1"><span class="reel-text">?</span></div>
+      <div class="reel" data-reel="2"><span class="reel-text">?</span></div>
+    </div>
+    <div class="spin-row">
+      <button class="btn solid spin-btn" id="spinBtn">Spin!</button>
+    </div>
+    <p class="spin-hint" id="spinHint" hidden></p>
+  </section>
+
+  <section class="card">
+    <p class="eyebrow">Add a meal idea</p>
+    <form id="addForm" class="addrow" novalidate>
+      <input id="addName" placeholder="What's the idea?" aria-label="Meal idea" autocomplete="off">
+      <button type="submit" class="btn solid">Add</button>
+    </form>
+    <div class="addopts">
+      <span class="seglab">Meal</span>
+      <span class="seg" data-role="mealtype" id="addMealType">
+        <button data-v="breakfast" aria-pressed="false">Breakfast</button>
+        <button data-v="lunch" aria-pressed="false">Lunch</button>
+        <button data-v="dinner" aria-pressed="true">Dinner</button>
+        <button data-v="snack" aria-pressed="false">Snack</button>
+      </span>
+      <label class="remember"><input type="checkbox" id="addHasIngredients"> Have ingredients</label>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="gothead">
+      <p class="eyebrow" style="margin:0" id="listEyebrow">Meal idea list</p>
+      <span class="spacer"></span>
+      <button class="btn ghost" id="listToggle">Show list</button>
+    </div>
+    <div id="listBody" hidden></div>
+  </section>
+</div>
+
+<!-- ============ Firebase: shared cross-device storage ============
+     Same family-hub Firebase project the other pages use, in its own
+     'meals/' document. Every device signs in anonymously just to
+     satisfy the security rules — the whole family reads and writes the
+     same list. -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import {
+    getFirestore, doc, setDoc, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  import {
+    getAuth, signInAnonymously, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+  var firebaseConfig = {
+    apiKey: "AIzaSyC-3RaR0DtRUHXOs2ZziYw3rcoY0oUMFNA",
+    authDomain: "familyhub-7ce5b.firebaseapp.com",
+    projectId: "familyhub-7ce5b",
+    storageBucket: "familyhub-7ce5b.firebasestorage.app",
+    messagingSenderId: "430624150535",
+    appId: "1:430624150535:web:ee6e142bb4f33d3c9b06a2"
+  };
+
+  var app = initializeApp(firebaseConfig);
+  var firestore = getFirestore(app);
+  var auth = getAuth(app);
+
+  function makeDbShim(){
+    return {
+      doc: function(path){
+        var ref = doc(firestore, path);
+        return {
+          set: function(data){ return setDoc(ref, data); },
+          onSnapshot: function(onNext, onError){
+            return onSnapshot(ref, function(snap){
+              onNext({ exists: snap.exists(), data: function(){ return snap.data(); } });
+            }, onError);
+          }
+        };
+      }
+    };
+  }
+
+  onAuthStateChanged(auth, function(user){
+    if(user){
+      window.__familyDb = makeDbShim();
+      window.dispatchEvent(new Event('family-db-ready'));
+    }
+  });
+  signInAnonymously(auth).catch(function(){
+    window.dispatchEvent(new Event('family-db-error'));
+  });
+</script>
+
+<script>
+(function(){
+  "use strict";
+
+  var LS = 'meal-ideas:v1';
+  var MEAL_TYPES = ['breakfast','lunch','dinner','snack'];
+  var MEAL_LABEL = {breakfast:'Breakfast', lunch:'Lunch', dinner:'Dinner', snack:'Snack'};
+
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function escapeHTML(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  var state = {
+    ideas: [],
+    mealType: 'dinner',
+    addMealType: 'dinner',
+    listOpen: false,
+    editId: null
+  };
+
+  var db = null, writing = 0, quiet = 0;
+  var spinning = false;
+
+  var toastEl = null, toastTimer = null;
+  function toast(msg){
+    if(!toastEl){
+      toastEl = document.createElement('div');
+      toastEl.className = 'toast';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    requestAnimationFrame(function(){ toastEl.classList.add('on'); });
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('on'); }, 2400);
+  }
+
+  /* ---------------- storage ---------------- */
+  function saveLocal(){
+    try{
+      localStorage.setItem(LS, JSON.stringify({
+        ideas: state.ideas, mealType: state.mealType, listOpen: state.listOpen
+      }));
+    }catch(e){}
+  }
+  function loadLocal(){
+    try{
+      var p = JSON.parse(localStorage.getItem(LS) || 'null');
+      if(!p) return;
+      if(Array.isArray(p.ideas)) state.ideas = p.ideas;
+      if(p.mealType) state.mealType = p.mealType;
+      if(typeof p.listOpen === 'boolean') state.listOpen = p.listOpen;
+    }catch(e){}
+  }
+  function persist(){
+    saveLocal();
+    if(!db) return;
+    writing++;
+    function done(){ writing = Math.max(0, writing-1); quiet = Date.now()+2000; }
+    try{
+      db.doc('meals/list').set({ideas: state.ideas, updatedAt: new Date().toISOString()})
+        .then(done, function(){ done(); toast('Could not save to your account — kept on this device'); });
+    }catch(e){ done(); }
+  }
+  function connect(){
+    function wireUp(){
+      db = window.__familyDb; markSync(true);
+      db.doc('meals/list').onSnapshot(function(s){
+        if(writing > 0 || Date.now() < quiet) return;
+        if(!s.exists) return;
+        var d = s.data() || {};
+        if(!Array.isArray(d.ideas)) return;
+        state.ideas = d.ideas;
+        saveLocal();
+        renderAll();
+      }, function(){ toast('Lost the connection to your account — still saving on this device'); });
+    }
+    window.addEventListener('family-db-ready', wireUp);
+    window.addEventListener('family-db-error', function(){ markSync(false); });
+    if(window.__familyDb) wireUp(); else markSync(false);
+  }
+  function markSync(live){
+    var chip = document.getElementById('syncChip');
+    chip.classList.toggle('live', !!live);
+    document.getElementById('syncText').textContent = live ? 'Synced across devices' : 'Saved on this device only';
+  }
+
+  /* ---------------- mutations ---------------- */
+  function addIdea(name, mealType, hasIngredients){
+    state.ideas.push({
+      id: uid(), name: name, mealType: mealType, hasIngredients: !!hasIngredients
+    });
+    persist(); renderAll();
+  }
+  function updateIdea(id, patch){
+    var it = state.ideas.filter(function(x){ return x.id === id; })[0];
+    if(!it) return;
+    Object.assign(it, patch);
+    persist(); renderAll();
+  }
+  function removeIdea(id){
+    state.ideas = state.ideas.filter(function(x){ return x.id !== id; });
+    state.editId = null;
+    persist(); renderAll();
+  }
+  function ideasFor(mealType){
+    return state.ideas.filter(function(it){ return it.mealType === mealType; });
+  }
+
+  /* ---------------- spinner ---------------- */
+  function shuffled(arr){
+    var out = arr.slice();
+    for(var i=out.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t = out[i]; out[i] = out[j]; out[j] = t;
+    }
+    return out;
+  }
+  function resetReels(){
+    document.querySelectorAll('.reel').forEach(function(el){
+      el.classList.remove('empty');
+      el.querySelector('.reel-text').textContent = '?';
+    });
+    document.getElementById('spinBtn').textContent = 'Spin!';
+  }
+  function updateSpinAvailability(){
+    var pool = ideasFor(state.mealType);
+    var btn = document.getElementById('spinBtn');
+    var hint = document.getElementById('spinHint');
+    btn.disabled = pool.length === 0;
+    if(pool.length === 0){
+      hint.hidden = false;
+      hint.textContent = 'Add a ' + MEAL_LABEL[state.mealType].toLowerCase() + ' idea below, then spin!';
+    } else if(pool.length < 3){
+      hint.hidden = false;
+      hint.textContent = 'Only ' + pool.length + ' ' + MEAL_LABEL[state.mealType].toLowerCase()
+        + ' idea' + (pool.length > 1 ? 's' : '') + ' so far — add more to fill all three reels.';
+    } else {
+      hint.hidden = true;
+    }
+  }
+  function spinReel(el, finalText, duration, names, onDone){
+    var start = Date.now();
+    var tick = 55;
+    function step(){
+      var elapsed = Date.now() - start;
+      if(elapsed >= duration){
+        el.textContent = finalText;
+        onDone();
+        return;
+      }
+      el.textContent = names[Math.floor(Math.random()*names.length)];
+      tick = Math.min(tick * 1.14, 260);
+      setTimeout(step, tick);
+    }
+    step();
+  }
+  function spin(){
+    if(spinning) return;
+    var pool = ideasFor(state.mealType);
+    if(!pool.length){ updateSpinAvailability(); return; }
+    spinning = true;
+    document.getElementById('spinBtn').disabled = true;
+    var names = pool.map(function(it){ return it.name; });
+    var picks = shuffled(pool).slice(0, 3);
+    var durations = [900, 1250, 1650];
+    var remaining = 3;
+    [0,1,2].forEach(function(idx){
+      var reelEl = document.querySelector('.reel[data-reel="'+idx+'"]');
+      var textEl = reelEl.querySelector('.reel-text');
+      var finalIdea = picks[idx];
+      reelEl.classList.toggle('empty', !finalIdea);
+      spinReel(textEl, finalIdea ? finalIdea.name : '—', durations[idx], names, function(){
+        remaining--;
+        if(remaining === 0){
+          spinning = false;
+          document.getElementById('spinBtn').disabled = false;
+          document.getElementById('spinBtn').textContent = 'Spin again';
+          updateSpinAvailability();
+        }
+      });
+    });
+  }
+
+  /* ---------------- rendering: add idea list ---------------- */
+  function ideaRowHTML(it){
+    var open = state.editId === it.id;
+    return '<li class="mitem" data-id="'+it.id+'">'
+      + '<div class="mrow">'
+      +   '<span class="mname">'+escapeHTML(it.name)+'</span>'
+      +   '<button class="ready-chip" data-ready="'+(it.hasIngredients?'true':'false')+'" data-toggle="'+it.id+'">'
+      +     (it.hasIngredients ? '✓ Have it' : 'Need items')
+      +   '</button>'
+      +   '<span class="macts">'
+      +     '<button class="iconbtn" data-edit="'+it.id+'" title="Change meal type" aria-label="Change meal type for '+escapeHTML(it.name)+'">✎</button>'
+      +     '<button class="iconbtn" data-del="'+it.id+'" title="Remove" aria-label="Remove '+escapeHTML(it.name)+'">×</button>'
+      +   '</span>'
+      + '</div>'
+      + (open ? editPanelHTML(it) : '')
+      + '</li>';
+  }
+  function editPanelHTML(it){
+    var opts = MEAL_TYPES.map(function(t){
+      return '<option value="'+t+'"'+(t===it.mealType?' selected':'')+'>'+MEAL_LABEL[t]+'</option>';
+    }).join('');
+    return '<div class="editpanel" data-editpanel="'+it.id+'">'
+      +   '<label class="seglab">Meal <select data-field="mealtype">'+opts+'</select></label>'
+      +   '<button type="button" class="btn ghost fa" data-editclose="1">Close</button>'
+      + '</div>';
+  }
+  function renderList(){
+    document.getElementById('listToggle').textContent = state.listOpen ? 'Hide' : 'Show list';
+    document.getElementById('listBody').hidden = !state.listOpen;
+    document.getElementById('listEyebrow').textContent = 'Meal idea list (' + state.ideas.length + ')';
+    if(!state.listOpen) return;
+    var host = document.getElementById('listBody');
+    if(!state.ideas.length){
+      host.innerHTML = '<p class="empty">No meal ideas yet — add your first one above.</p>';
+      return;
+    }
+    var html = '';
+    MEAL_TYPES.forEach(function(type){
+      var list = ideasFor(type).slice().sort(function(a,b){ return a.name.localeCompare(b.name); });
+      if(!list.length) return;
+      var readyCount = list.filter(function(it){ return it.hasIngredients; }).length;
+      html += '<p class="seclabel">'+MEAL_LABEL[type]+' <span class="count">('+readyCount+' of '+list.length+' ready)</span></p>'
+        + '<ul class="mlist">' + list.map(ideaRowHTML).join('') + '</ul>';
+    });
+    host.innerHTML = html;
+    wireRows(host);
+  }
+  function wireRows(host){
+    host.querySelectorAll('[data-toggle]').forEach(function(el){
+      el.addEventListener('click', function(){ updateIdea(el.dataset.toggle, {hasIngredients: el.dataset.ready !== 'true'}); });
+    });
+    host.querySelectorAll('[data-del]').forEach(function(el){
+      el.addEventListener('click', function(e){ e.stopPropagation(); removeIdea(el.dataset.del); });
+    });
+    host.querySelectorAll('[data-edit]').forEach(function(el){
+      el.addEventListener('click', function(e){
+        e.stopPropagation();
+        var same = state.editId === el.dataset.edit;
+        state.editId = same ? null : el.dataset.edit;
+        renderAll();
+      });
+    });
+    var panel = host.querySelector('[data-editpanel]');
+    if(panel){
+      var id = panel.dataset.editpanel;
+      panel.querySelector('[data-field="mealtype"]').addEventListener('change', function(){ updateIdea(id, {mealType: this.value}); });
+      panel.querySelector('[data-editclose]').addEventListener('click', function(e){
+        e.stopPropagation(); state.editId = null; renderAll();
+      });
+    }
+  }
+
+  function paintSegs(){
+    document.querySelectorAll('#mealTypeFilter button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.v === state.mealType ? 'true':'false'); });
+    document.querySelectorAll('#addMealType button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.v === state.addMealType ? 'true':'false'); });
+  }
+
+  function renderAll(){
+    paintSegs();
+    updateSpinAvailability();
+    renderList();
+  }
+
+  /* ---------------- wiring ---------------- */
+  document.getElementById('mealTypeFilter').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    state.mealType = b.dataset.v; saveLocal();
+    resetReels(); paintSegs(); updateSpinAvailability();
+  });
+  document.getElementById('addMealType').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    state.addMealType = b.dataset.v; paintSegs();
+  });
+  document.getElementById('addForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var input = document.getElementById('addName');
+    var name = input.value.trim();
+    if(!name) return;
+    var hasIngredients = document.getElementById('addHasIngredients').checked;
+    addIdea(name, state.addMealType, hasIngredients);
+    input.value = '';
+    document.getElementById('addHasIngredients').checked = false;
+    input.focus();
+  });
+  document.getElementById('spinBtn').addEventListener('click', spin);
+  document.getElementById('listToggle').addEventListener('click', function(){
+    state.listOpen = !state.listOpen; saveLocal(); renderList();
+  });
+
+  loadLocal();
+  saveLocal();
+  markSync(false);
+  renderAll();
+  connect();
+})();
+</script>
+</body></html>
