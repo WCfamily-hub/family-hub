@@ -78,8 +78,10 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 8px;text-align:center;
   box-shadow:inset 0 2px 6px rgba(30,35,80,.08)}
 .reel.empty{border-style:dashed;opacity:.55}
+.reel.ready{border-color:var(--good);background:var(--good-tint)}
 .reel-text{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clamp(.88rem,2.6vw,1.1rem);
   color:var(--ink);line-height:1.25;word-break:break-word}
+.reel.ready .reel-text{color:var(--good)}
 .reel-ing{font-weight:700;font-size:.72rem;color:var(--ink-muted);line-height:1.35;word-break:break-word}
 .spin-row{display:flex;justify-content:center}
 .spin-btn{font-size:1rem;padding:13px 32px;min-height:50px}
@@ -388,7 +390,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   }
   function resetReels(){
     document.querySelectorAll('.reel').forEach(function(el){
-      el.classList.remove('empty');
+      el.classList.remove('empty', 'ready');
       el.querySelector('.reel-text').textContent = '?';
       var ingEl = el.querySelector('.reel-ing');
       ingEl.hidden = true; ingEl.textContent = '';
@@ -443,12 +445,14 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       var ingEl = reelEl.querySelector('.reel-ing');
       var finalIdea = picks[idx];
       reelEl.classList.toggle('empty', !finalIdea);
+      reelEl.classList.remove('ready');
       ingEl.hidden = true; ingEl.textContent = '';
       spinReel(textEl, finalIdea ? finalIdea.name : '—', durations[idx], names, function(){
         if(finalIdea && finalIdea.ingredients){
           ingEl.textContent = finalIdea.ingredients;
           ingEl.hidden = false;
         }
+        reelEl.classList.toggle('ready', !!(finalIdea && finalIdea.hasIngredients));
         remaining--;
         if(remaining === 0){
           spinning = false;
