@@ -82,13 +82,18 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .catbox[data-cat="carb"]{border-color:var(--carb)}
 .catbox[data-cat="vegetable"]{border-color:var(--vegetable)}
 .catbox[data-cat="wholemeal"]{border-color:var(--wholemeal)}
+.catbox-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .catlabel{display:flex;align-items:center;gap:6px;font-family:"Grandstander","Nunito",sans-serif;font-weight:800;
-  font-size:.76rem;color:var(--ink-muted);letter-spacing:.06em;text-transform:uppercase;margin:0 0 8px}
+  font-size:.76rem;color:var(--ink-muted);letter-spacing:.06em;text-transform:uppercase;margin:0}
 .catlabel svg{flex:none}
 .catbox[data-cat="protein"] .catlabel{color:var(--protein)}
 .catbox[data-cat="carb"] .catlabel{color:var(--carb)}
 .catbox[data-cat="vegetable"] .catlabel{color:var(--vegetable)}
 .catbox[data-cat="wholemeal"] .catlabel{color:var(--wholemeal)}
+.catspin-btn{font-family:inherit;font-weight:800;font-size:.68rem;letter-spacing:.02em;padding:5px 11px;border-radius:999px;
+  cursor:pointer;border:1.5px solid var(--line);background:var(--paper);color:var(--ink-soft);white-space:nowrap;flex:none}
+.catspin-btn:hover{border-color:var(--ink-soft);color:var(--ink)}
+.catspin-btn:disabled{opacity:.5;cursor:not-allowed}
 .reels{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:0}
 .reel{background:var(--paper-tint);border:2px solid var(--line);border-radius:13px;min-height:68px;position:relative;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:7px 6px;text-align:center;
@@ -344,7 +349,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   };
 
   var db = null, writing = 0, quiet = 0;
-  var spinning = false;
+  var catSpinning = {};
 
   var toastEl = null, toastTimer = null;
   function toast(msg){
@@ -493,6 +498,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     var host = document.getElementById('spinnerArea');
     var cats = categoriesFor(state.mealType);
     var isDinner = state.mealType === 'dinner';
+    catSpinning = {};
     host.innerHTML = cats.map(function(cat){
       var reelsHTML = '<div class="reels'+(isDinner?' pickable':'')+'" data-cat="'+(cat||'')+'">'
         +   [0,1,2].map(function(i){
@@ -502,23 +508,33 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
         + '<p class="spin-hint" data-cathint="'+(cat||'')+'" hidden></p>';
       if(!cat) return reelsHTML;
       return '<div class="catbox" data-cat="'+cat+'">'
-        + '<p class="catlabel">'+DINNER_CATEGORY_ICON[cat]+'<span>'+DINNER_CATEGORY_LABEL[cat]+'</span></p>'
+        + '<div class="catbox-head">'
+        +   '<p class="catlabel">'+DINNER_CATEGORY_ICON[cat]+'<span>'+DINNER_CATEGORY_LABEL[cat]+'</span></p>'
+        +   '<button type="button" class="catspin-btn" data-catspin="'+cat+'">Spin</button>'
+        + '</div>'
         + reelsHTML
         + '</div>';
     }).join('');
     if(isDinner) wireReelClicks(host);
-    document.getElementById('spinBtn').textContent = 'Spin!';
+    wireCatSpinButtons(host);
+    document.getElementById('spinBtn').textContent = isDinner ? 'Spin all' : 'Spin!';
   }
   function wireReelClicks(host){
     host.querySelectorAll('.reel').forEach(function(reelEl){
       reelEl.addEventListener('click', function(){
-        if(spinning || !reelEl.dataset.ideaId) return;
+        var cat = reelEl.closest('.reels').dataset.cat || '';
+        if(catSpinning[cat] || !reelEl.dataset.ideaId) return;
         var reelsBlock = reelEl.closest('.reels');
         var wasSelected = reelEl.classList.contains('selected');
         reelsBlock.querySelectorAll('.reel').forEach(function(r){ r.classList.remove('selected'); });
         if(!wasSelected) reelEl.classList.add('selected');
         updateSaveButton();
       });
+    });
+  }
+  function wireCatSpinButtons(host){
+    host.querySelectorAll('[data-catspin]').forEach(function(btn){
+      btn.addEventListener('click', function(){ spinCategory(btn.dataset.catspin, null); });
     });
   }
   function currentSelections(){
@@ -539,6 +555,8 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     cats.forEach(function(cat){
       var pool = ideasForSpin(state.mealType, cat);
       if(pool.length) anyAvailable = true;
+      var catBtn = document.querySelector('[data-catspin="'+(cat||'')+'"]');
+      if(catBtn) catBtn.disabled = pool.length === 0;
       var hintEl = document.querySelector('[data-cathint="'+(cat||'')+'"]');
       if(!hintEl) return;
       var label = cat ? DINNER_CATEGORY_LABEL[cat].toLowerCase() : MEAL_LABEL[state.mealType].toLowerCase();
@@ -571,52 +589,70 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     }
     step();
   }
-  function spin(){
-    if(spinning) return;
-    var cats = categoriesFor(state.mealType);
-    var catPools = {};
-    var anyAvailable = false;
-    cats.forEach(function(cat){
-      var pool = ideasForSpin(state.mealType, cat);
-      catPools[cat || ''] = pool;
-      if(pool.length) anyAvailable = true;
+  /* Spins just one category's 3 reels. onDone (optional) fires once that
+     category's reels have all landed - used by spin() to know when every
+     category in a "spin all" has finished. */
+  function spinCategory(cat, onDone){
+    var key = cat || '';
+    if(catSpinning[key]) return;
+    var pool = ideasForSpin(state.mealType, cat);
+    if(!pool.length){ if(onDone) onDone(); return; }
+    catSpinning[key] = true;
+    var catBtn = document.querySelector('[data-catspin="'+key+'"]');
+    if(catBtn) catBtn.disabled = true;
+    var names = pool.map(function(it){ return it.name; });
+    var picks = pickSpinResult(pool);
+    var durations = [900, 1250, 1650];
+    var remaining = 3;
+    var reelsEl = document.querySelector('.reels[data-cat="'+key+'"]');
+    [0,1,2].forEach(function(idx){
+      var reelEl = reelsEl.querySelector('.reel[data-reel="'+idx+'"]');
+      var textEl = reelEl.querySelector('.reel-text');
+      var ingEl = reelEl.querySelector('.reel-ing');
+      var finalIdea = picks[idx];
+      reelEl.classList.remove('ready', 'selected');
+      reelEl.classList.toggle('empty', !finalIdea);
+      if(finalIdea){ reelEl.dataset.ideaId = finalIdea.id; reelEl.dataset.ideaName = finalIdea.name; }
+      else { delete reelEl.dataset.ideaId; delete reelEl.dataset.ideaName; }
+      ingEl.hidden = true; ingEl.textContent = '';
+      spinReel(textEl, finalIdea ? finalIdea.name : '—', durations[idx], names, function(){
+        if(finalIdea && finalIdea.ingredients){
+          ingEl.textContent = finalIdea.ingredients;
+          ingEl.hidden = false;
+        }
+        reelEl.classList.toggle('ready', !!(finalIdea && finalIdea.hasIngredients));
+        remaining--;
+        if(remaining === 0){
+          catSpinning[key] = false;
+          if(catBtn) catBtn.disabled = false;
+          updateSaveButton();
+          if(onDone) onDone();
+        }
+      });
     });
+  }
+  function spin(){
+    var cats = categoriesFor(state.mealType);
+    var anyAvailable = cats.some(function(cat){ return ideasForSpin(state.mealType, cat).length > 0; });
     if(!anyAvailable){ updateSpinAvailability(); return; }
-    spinning = true;
+    var isDinner = state.mealType === 'dinner';
     document.getElementById('spinBtn').disabled = true;
     document.getElementById('saveRow').hidden = true;
-    var durations = [900, 1250, 1650];
-    var remaining = cats.length * 3;
-    cats.forEach(function(cat){
-      var pool = catPools[cat || ''];
-      var names = pool.length ? pool.map(function(it){ return it.name; }) : ['—'];
-      var picks = pickSpinResult(pool);
-      var reelsEl = document.querySelector('.reels[data-cat="'+(cat||'')+'"]');
-      [0,1,2].forEach(function(idx){
-        var reelEl = reelsEl.querySelector('.reel[data-reel="'+idx+'"]');
-        var textEl = reelEl.querySelector('.reel-text');
-        var ingEl = reelEl.querySelector('.reel-ing');
-        var finalIdea = picks[idx];
-        reelEl.classList.remove('ready', 'selected');
-        reelEl.classList.toggle('empty', !finalIdea);
-        if(finalIdea){ reelEl.dataset.ideaId = finalIdea.id; reelEl.dataset.ideaName = finalIdea.name; }
-        else { delete reelEl.dataset.ideaId; delete reelEl.dataset.ideaName; }
-        ingEl.hidden = true; ingEl.textContent = '';
-        spinReel(textEl, finalIdea ? finalIdea.name : '—', durations[idx], names, function(){
-          if(finalIdea && finalIdea.ingredients){
-            ingEl.textContent = finalIdea.ingredients;
-            ingEl.hidden = false;
-          }
-          reelEl.classList.toggle('ready', !!(finalIdea && finalIdea.hasIngredients));
-          remaining--;
-          if(remaining === 0){
-            spinning = false;
-            document.getElementById('spinBtn').disabled = false;
-            document.getElementById('spinBtn').textContent = 'Spin again';
-            updateSpinAvailability();
-            updateSaveButton();
-          }
-        });
+    /* Skip (don't wait on) a category that's already spinning on its own -
+       spinCategory() would no-op for it anyway, and waiting on it here
+       could leave this button disabled forever if that other spin was
+       started independently. */
+    var pending = cats.filter(function(cat){ return !catSpinning[cat || '']; });
+    function finish(){
+      document.getElementById('spinBtn').disabled = false;
+      document.getElementById('spinBtn').textContent = isDinner ? 'Spin all' : 'Spin again';
+    }
+    if(!pending.length){ finish(); return; }
+    var remaining = pending.length;
+    pending.forEach(function(cat){
+      spinCategory(cat, function(){
+        remaining--;
+        if(remaining === 0) finish();
       });
     });
   }
