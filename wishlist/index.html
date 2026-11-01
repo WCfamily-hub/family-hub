@@ -1,0 +1,388 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Wish List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@600;800&family=Nunito:wght@600;700;800&display=swap">
+<style>
+:root{
+  --ground-top:#E9EFFC;--ground-bot:#FFF4DE;--paper:#FFFFFF;--paper-tint:#F5F8FF;
+  --ink:#1E2350;--ink-soft:#5C6396;--ink-muted:#8B92C0;--line:#CFD9F2;
+  --sun:#FFC13B;--sun-deep:#EE9B14;--good:#0ca30c;
+  --zev:#0F9E98;--zev-tint:#DFF5F3;--eve:#DE4E88;--eve-tint:#FCE2EC;
+  --shadow:0 10px 30px rgba(30,35,80,.10);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground-top:#0D1233;--ground-bot:#241E38;--paper:#191F45;--paper-tint:#141A3B;
+    --ink:#EEF2FF;--ink-soft:#A6AFDF;--ink-muted:#7E86B8;--line:#333C74;
+    --sun:#FFCE5C;--sun-deep:#FFB021;--good:#3ecb3e;
+    --zev:#43D8CD;--zev-tint:#0E3B39;--eve:#FF86B4;--eve-tint:#432031;
+    --shadow:0 10px 30px rgba(0,0,0,.32);
+  }
+}
+:root[data-theme="dark"]{
+  --ground-top:#0D1233;--ground-bot:#241E38;--paper:#191F45;--paper-tint:#141A3B;
+  --ink:#EEF2FF;--ink-soft:#A6AFDF;--ink-muted:#7E86B8;--line:#333C74;
+  --sun:#FFCE5C;--sun-deep:#FFB021;--good:#3ecb3e;
+  --zev:#43D8CD;--zev-tint:#0E3B39;--eve:#FF86B4;--eve-tint:#432031;
+  --shadow:0 10px 30px rgba(0,0,0,.32);
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0;font-family:"Nunito",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);background:linear-gradient(168deg,var(--ground-top) 0%,var(--ground-bot) 100%);
+  background-attachment:fixed;min-height:100vh;-webkit-text-size-adjust:100%;
+}
+.wrap{max-width:900px;margin:0 auto;padding:clamp(14px,2.4vw,30px) clamp(12px,2.4vw,28px) 56px;display:flex;flex-direction:column;gap:clamp(12px,1.8vw,20px)}
+
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mark{width:44px;height:44px;flex:none}
+h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clamp(1.6rem,3.4vw,2.4rem);margin:0;line-height:1}
+.sub{margin:.25em 0 0;font-weight:700;color:var(--ink-soft);font-size:clamp(.82rem,1.3vw,.95rem)}
+.spacer{flex:1}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font-weight:800;font-size:.76rem;color:var(--ink-soft)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--ink-muted);flex:none}
+.chip.live .dot{background:var(--good)}
+
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:clamp(14px,2vw,22px)}
+.eyebrow{font-weight:800;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-muted);margin:0 0 10px}
+
+.btn{font-family:inherit;font-weight:800;font-size:.86rem;padding:9px 15px;border-radius:999px;cursor:pointer;
+  border:2px solid var(--line);background:var(--paper);color:var(--ink-soft);transition:all .15s ease;white-space:nowrap}
+.btn:hover{border-color:var(--ink-soft);color:var(--ink)}
+.btn.solid{background:var(--ink);border-color:var(--ink);color:var(--paper);min-height:46px;padding:11px 20px}
+
+/* ---------------- kid columns ---------------- */
+.kidcols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.8vw,20px)}
+.kidcard{position:relative;overflow:hidden}
+.kidcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--kid)}
+.kidcard[data-kid="zev"]{--kid:var(--zev);--kid-tint:var(--zev-tint)}
+.kidcard[data-kid="eve"]{--kid:var(--eve);--kid-tint:var(--eve-tint)}
+.kidname{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:1.3rem;color:var(--kid);margin:0 0 12px;letter-spacing:.03em}
+
+.addrow{display:grid;grid-template-columns:1fr auto;gap:8px}
+.addrow input{width:100%;font-family:inherit;font-weight:700;font-size:1rem;color:var(--ink);background:var(--paper-tint);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px}
+.addopts{display:flex;align-items:center;gap:10px;margin-top:10px}
+.addopts .seglab{font-weight:800;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
+
+.starpick{display:inline-flex;gap:2px}
+.starbtn{background:transparent;border:none;padding:3px;cursor:pointer;line-height:0;border-radius:8px}
+.starbtn:hover{background:var(--paper-tint)}
+.starbtn svg{width:22px;height:22px;display:block}
+.star-fill{fill:var(--sun);stroke:var(--sun-deep)}
+.star-empty{fill:none;stroke:var(--line)}
+
+.wlist{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.witem{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--paper-tint);border-radius:14px;padding:10px 14px}
+.wname{flex:1;min-width:110px;font-weight:700;font-size:1rem;overflow-wrap:anywhere}
+.wstars{display:inline-flex;gap:1px;flex:none}
+.wstars .starbtn svg{width:19px;height:19px}
+.iconbtn{border:none;background:transparent;color:var(--ink-muted);cursor:pointer;font-size:1rem;line-height:1;padding:5px 7px;border-radius:8px;flex:none}
+.iconbtn:hover{color:var(--ink);background:var(--paper)}
+
+.empty{font-weight:700;color:var(--ink-muted);font-size:.9rem;padding:14px 4px}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(12px);z-index:70;
+  background:var(--ink);color:var(--paper);font-weight:800;font-size:.9rem;padding:11px 20px;border-radius:999px;
+  box-shadow:0 12px 30px rgba(20,25,60,.32);opacity:0;transition:opacity .2s ease,transform .2s ease;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:640px){
+  .kidcols{grid-template-columns:1fr}
+  .addrow{grid-template-columns:1fr}
+  .addrow .btn.solid{width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01s!important}}
+.hubnav{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 0 0;max-width:900px;margin:0 auto}
+.hubtab{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:.82rem;
+  padding:8px 16px;border-radius:999px;text-decoration:none;color:var(--ink-soft);background:var(--paper);
+  border:1.5px solid var(--line)}
+.hubtab.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+</style>
+
+<nav class="hubnav" aria-label="Family hub">
+  <a href="../" class="hubtab">Home</a>
+  <a href="../routine/" class="hubtab">Morning Routine</a>
+  <a href="../bank/" class="hubtab">Mama Bank</a>
+  <a href="../chores/" class="hubtab">Chores</a>
+  <a href="../grocery/" class="hubtab">Grocery List</a>
+  <a href="../meals/" class="hubtab">Meal Ideas</a>
+  <a href="../recipes/" class="hubtab">Recipes</a>
+  <a href="./" class="hubtab active">Wish List</a>
+</nav>
+
+<div class="wrap">
+  <header class="top">
+    <svg class="mark" viewBox="0 0 48 48" aria-hidden="true">
+      <path d="M24 6l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="#FFC13B" stroke="#EE9B14" stroke-width="2.5" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <h1>Wish List</h1>
+      <p class="sub">Things Z and E want, starred by how much</p>
+    </div>
+    <div class="spacer"></div>
+    <span class="chip" id="syncChip"><span class="dot"></span><span id="syncText">Checking…</span></span>
+  </header>
+
+  <div class="kidcols">
+    <section class="card kidcard" data-kid="zev">
+      <h2 class="kidname">Z</h2>
+      <form class="addrow" data-addform="zev">
+        <input data-addname="zev" placeholder="What do you want?" aria-label="Wish list item for Z" autocomplete="off">
+        <button type="submit" class="btn solid">Add</button>
+      </form>
+      <div class="addopts">
+        <span class="seglab">Stars</span>
+        <span class="starpick" data-addstars="zev"></span>
+      </div>
+      <ul class="wlist" id="wlist-zev"></ul>
+    </section>
+
+    <section class="card kidcard" data-kid="eve">
+      <h2 class="kidname">E</h2>
+      <form class="addrow" data-addform="eve">
+        <input data-addname="eve" placeholder="What do you want?" aria-label="Wish list item for E" autocomplete="off">
+        <button type="submit" class="btn solid">Add</button>
+      </form>
+      <div class="addopts">
+        <span class="seglab">Stars</span>
+        <span class="starpick" data-addstars="eve"></span>
+      </div>
+      <ul class="wlist" id="wlist-eve"></ul>
+    </section>
+  </div>
+</div>
+
+<!-- ============ Firebase: shared cross-device storage ============
+     Same family-hub Firebase project the other pages use, in its own
+     'wishlist/' document. Every device signs in anonymously just to
+     satisfy the security rules — the whole family reads and writes the
+     same list. -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import {
+    getFirestore, doc, setDoc, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  import {
+    getAuth, signInAnonymously, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+  var firebaseConfig = {
+    apiKey: "AIzaSyC-3RaR0DtRUHXOs2ZziYw3rcoY0oUMFNA",
+    authDomain: "familyhub-7ce5b.firebaseapp.com",
+    projectId: "familyhub-7ce5b",
+    storageBucket: "familyhub-7ce5b.firebasestorage.app",
+    messagingSenderId: "430624150535",
+    appId: "1:430624150535:web:ee6e142bb4f33d3c9b06a2"
+  };
+
+  var app = initializeApp(firebaseConfig);
+  var firestore = getFirestore(app);
+  var auth = getAuth(app);
+
+  function makeDbShim(){
+    return {
+      doc: function(path){
+        var ref = doc(firestore, path);
+        return {
+          set: function(data){ return setDoc(ref, data); },
+          onSnapshot: function(onNext, onError){
+            return onSnapshot(ref, function(snap){
+              onNext({ exists: snap.exists(), data: function(){ return snap.data(); } });
+            }, onError);
+          }
+        };
+      }
+    };
+  }
+
+  onAuthStateChanged(auth, function(user){
+    if(user){
+      window.__familyDb = makeDbShim();
+      window.dispatchEvent(new Event('family-db-ready'));
+    }
+  });
+  signInAnonymously(auth).catch(function(){
+    window.dispatchEvent(new Event('family-db-error'));
+  });
+</script>
+
+<script>
+(function(){
+  "use strict";
+
+  var LS = 'wishlist:v1';
+  var KIDS = ['zev','eve'];
+
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function escapeHTML(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function starSVG(filled){
+    return '<svg viewBox="0 0 48 48" aria-hidden="true"><path class="'+(filled?'star-fill':'star-empty')+'" '
+      + 'd="M24 6l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" stroke-width="2.5" stroke-linejoin="round"/></svg>';
+  }
+
+  var state = {
+    items: [],
+    addStars: { zev: 1, eve: 1 }
+  };
+
+  var db = null, writing = 0, quiet = 0;
+
+  var toastEl = null, toastTimer = null;
+  function toast(msg){
+    if(!toastEl){
+      toastEl = document.createElement('div');
+      toastEl.className = 'toast';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    requestAnimationFrame(function(){ toastEl.classList.add('on'); });
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('on'); }, 2400);
+  }
+
+  /* ---------------- storage ---------------- */
+  function saveLocal(){
+    try{
+      localStorage.setItem(LS, JSON.stringify({ items: state.items }));
+    }catch(e){}
+  }
+  function loadLocal(){
+    try{
+      var p = JSON.parse(localStorage.getItem(LS) || 'null');
+      if(!p) return;
+      if(Array.isArray(p.items)) state.items = p.items;
+    }catch(e){}
+  }
+  function persist(){
+    saveLocal();
+    if(!db) return;
+    writing++;
+    function done(){ writing = Math.max(0, writing-1); quiet = Date.now()+2000; }
+    try{
+      db.doc('wishlist/list').set({items: state.items, updatedAt: new Date().toISOString()})
+        .then(done, function(){ done(); toast('Could not save to your account — kept on this device'); });
+    }catch(e){ done(); }
+  }
+  function connect(){
+    function wireUp(){
+      db = window.__familyDb; markSync(true);
+      db.doc('wishlist/list').onSnapshot(function(s){
+        if(writing > 0 || Date.now() < quiet) return;
+        if(!s.exists) return;
+        var d = s.data() || {};
+        if(!Array.isArray(d.items)) return;
+        state.items = d.items;
+        saveLocal();
+        renderAll();
+      }, function(){ toast('Lost the connection to your account — still saving on this device'); });
+    }
+    window.addEventListener('family-db-ready', wireUp);
+    window.addEventListener('family-db-error', function(){ markSync(false); });
+    if(window.__familyDb) wireUp(); else markSync(false);
+  }
+  function markSync(live){
+    var chip = document.getElementById('syncChip');
+    chip.classList.toggle('live', !!live);
+    document.getElementById('syncText').textContent = live ? 'Synced across devices' : 'Saved on this device only';
+  }
+
+  /* ---------------- mutations ---------------- */
+  function addItem(kid, name, stars){
+    state.items.push({ id: uid(), kid: kid, name: name, stars: stars, createdAt: new Date().toISOString() });
+    persist(); renderAll();
+  }
+  function updateItem(id, patch){
+    var it = state.items.filter(function(x){ return x.id === id; })[0];
+    if(!it) return;
+    Object.assign(it, patch);
+    persist(); renderAll();
+  }
+  function removeItem(id){
+    state.items = state.items.filter(function(x){ return x.id !== id; });
+    persist(); renderAll();
+  }
+  function itemsFor(kid){
+    return state.items.filter(function(it){ return it.kid === kid; });
+  }
+
+  /* ---------------- rendering ---------------- */
+  function renderAddStars(){
+    KIDS.forEach(function(kid){
+      var host = document.querySelector('[data-addstars="'+kid+'"]');
+      var current = state.addStars[kid];
+      var html = '';
+      for(var i=1;i<=3;i++){
+        html += '<button type="button" class="starbtn" data-addstar="'+kid+'" data-n="'+i+'" aria-label="'+i+' star'+(i>1?'s':'')+'">'
+          + starSVG(i <= current) + '</button>';
+      }
+      host.innerHTML = html;
+    });
+  }
+  function itemRowHTML(it){
+    var stars = '';
+    for(var i=1;i<=3;i++){
+      stars += '<button type="button" class="starbtn" data-star="'+it.id+'" data-n="'+i+'" aria-label="Set '+i+' star'+(i>1?'s':'')+'">'
+        + starSVG(i <= it.stars) + '</button>';
+    }
+    return '<li class="witem" data-id="'+it.id+'">'
+      + '<span class="wname">'+escapeHTML(it.name)+'</span>'
+      + '<span class="wstars">'+stars+'</span>'
+      + '<button class="iconbtn" data-del="'+it.id+'" title="Remove" aria-label="Remove '+escapeHTML(it.name)+'">×</button>'
+      + '</li>';
+  }
+  function renderList(kid){
+    var host = document.getElementById('wlist-'+kid);
+    var list = itemsFor(kid).slice().sort(function(a,b){
+      if(a.stars !== b.stars) return b.stars - a.stars;
+      return a.name.localeCompare(b.name);
+    });
+    if(!list.length){
+      host.innerHTML = '<li class="empty">Nothing on the list yet.</li>';
+      return;
+    }
+    host.innerHTML = list.map(itemRowHTML).join('');
+    host.querySelectorAll('[data-star]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        updateItem(btn.dataset.star, { stars: parseInt(btn.dataset.n, 10) });
+      });
+    });
+    host.querySelectorAll('[data-del]').forEach(function(btn){
+      btn.addEventListener('click', function(){ removeItem(btn.dataset.del); });
+    });
+  }
+  function renderAll(){
+    renderAddStars();
+    KIDS.forEach(renderList);
+  }
+
+  /* ---------------- wiring ---------------- */
+  document.querySelectorAll('[data-addform]').forEach(function(form){
+    var kid = form.dataset.addform;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var input = form.querySelector('[data-addname]');
+      var name = input.value.trim();
+      if(!name) return;
+      addItem(kid, name, state.addStars[kid]);
+      input.value = '';
+      input.focus();
+    });
+  });
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-addstar]');
+    if(!btn) return;
+    state.addStars[btn.dataset.addstar] = parseInt(btn.dataset.n, 10);
+    renderAddStars();
+  });
+
+  loadLocal();
+  saveLocal();
+  markSync(false);
+  renderAll();
+  connect();
+})();
+</script>
+</body></html>
