@@ -151,16 +151,14 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .empty{font-weight:700;color:var(--ink-muted);font-size:.9rem;padding:14px 4px}
 .gothead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 
-/* ---------------- week plan ---------------- */
-.weekplan{display:flex;flex-direction:column;gap:8px}
-.planrow{display:flex;align-items:center;gap:12px;background:var(--paper-tint);border-radius:14px;padding:9px 14px;border:1.5px solid transparent}
-.planrow.today{border-color:var(--sun-deep);background:var(--breakfast-tint)}
-.plandate{display:flex;flex-direction:column;align-items:center;justify-content:center;width:44px;flex:none;line-height:1.15}
-.planday{font-weight:800;font-size:.66rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-muted)}
-.plannum{font-weight:800;font-size:1.05rem;color:var(--ink)}
-.planrow.today .planday,.planrow.today .plannum{color:var(--sun-deep)}
+/* ---------------- meal plan ---------------- */
+.mealplan{display:flex;flex-direction:column;gap:8px}
+.planrow2{display:flex;align-items:center;gap:10px}
 .planinput{flex:1;min-width:0;font-family:inherit;font-weight:700;font-size:.95rem;color:var(--ink);background:var(--paper);
   border:1.5px solid var(--line);border-radius:10px;padding:9px 12px}
+.donecheck{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.78rem;color:var(--ink-soft);
+  cursor:pointer;user-select:none;flex:none;white-space:nowrap}
+.donecheck input{width:16px;height:16px;accent-color:var(--good)}
 
 /* ---------------- saved sets ---------------- */
 .setlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
@@ -237,8 +235,11 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   </section>
 
   <section class="card">
-    <p class="eyebrow">This week's plan</p>
-    <div class="weekplan" id="weekPlanBody"></div>
+    <p class="eyebrow">Upcoming meals</p>
+    <div class="mealplan" id="mealPlanBody"></div>
+    <div class="spin-row">
+      <button class="btn ghost" id="addPlanBtn">+ Add another</button>
+    </div>
   </section>
 
   <section class="card">
@@ -363,7 +364,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     listOpen: false,
     editId: null,
     savedSets: [],
-    plannedMeals: {}
+    plannedMeals: []
   };
 
   var db = null, writing = 0, quiet = 0;
@@ -399,7 +400,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       if(p.mealType) state.mealType = p.mealType;
       if(typeof p.listOpen === 'boolean') state.listOpen = p.listOpen;
       if(Array.isArray(p.savedSets)) state.savedSets = p.savedSets;
-      if(p.plannedMeals && typeof p.plannedMeals === 'object') state.plannedMeals = p.plannedMeals;
+      if(Array.isArray(p.plannedMeals)) state.plannedMeals = p.plannedMeals;
     }catch(e){}
   }
   function persist(){
@@ -422,7 +423,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
         var d = s.data() || {};
         var changed = false;
         if(Array.isArray(d.ideas)){ state.ideas = d.ideas; changed = true; }
-        if(d.plannedMeals && typeof d.plannedMeals === 'object'){ state.plannedMeals = d.plannedMeals; changed = true; }
+        if(Array.isArray(d.plannedMeals)){ state.plannedMeals = d.plannedMeals; changed = true; }
         if(Array.isArray(d.savedSets)){ state.savedSets = d.savedSets; changed = true; }
         if(!changed) return;
         saveLocal();
@@ -767,42 +768,57 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
         return '<span class="setitem">'+tag+escapeHTML(it.name)+'</span>';
       }).join('');
       return '<li class="setrow" data-id="'+set.id+'"><div class="setparts">'+parts+'</div>'
+        + '<button class="iconbtn" data-addplan="'+set.id+'" title="Add to plan" aria-label="Add this set to the meal plan">→</button>'
         + '<button class="iconbtn" data-delset="'+set.id+'" title="Remove" aria-label="Remove saved set">×</button></li>';
     }).join('') + '</ul>';
+    host.querySelectorAll('[data-addplan]').forEach(function(el){
+      el.addEventListener('click', function(){ addSetToPlan(el.dataset.addplan); });
+    });
     host.querySelectorAll('[data-delset]').forEach(function(el){
       el.addEventListener('click', function(){ removeSavedSet(el.dataset.delset); });
     });
   }
-  var DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-  function weekDates(){
-    var today = new Date();
-    var start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
-    var out = [];
-    for(var i=0;i<7;i++) out.push(new Date(start.getFullYear(), start.getMonth(), start.getDate()+i));
-    return out;
+  function addPlanRow(){
+    state.plannedMeals.push({ id: uid(), text: '' });
+    persist(); renderAll();
   }
-  function renderWeekPlan(){
-    var host = document.getElementById('weekPlanBody');
-    var todayStr = ymd(new Date());
-    host.innerHTML = weekDates().map(function(d){
-      var iso = ymd(d);
-      var isToday = iso === todayStr;
-      var dateLabel = d.getDate() === 1 ? MON[d.getMonth()]+' 1' : String(d.getDate());
-      var val = state.plannedMeals[iso] || '';
-      return '<div class="planrow'+(isToday?' today':'')+'">'
-        + '<div class="plandate"><span class="planday">'+DOW[d.getDay()]+'</span><span class="plannum">'+dateLabel+'</span></div>'
-        + '<input class="planinput" data-plan="'+iso+'" placeholder="Nothing planned yet" value="'+escapeHTML(val)+'" aria-label="Planned meal for '+DOW[d.getDay()]+' '+dateLabel+'">'
+  function updatePlanText(id, text){
+    var p = state.plannedMeals.filter(function(x){ return x.id === id; })[0];
+    if(!p) return;
+    p.text = text;
+    persist(); renderAll();
+  }
+  function removePlanEntry(id){
+    state.plannedMeals = state.plannedMeals.filter(function(x){ return x.id !== id; });
+    persist(); renderAll();
+  }
+  function addSetToPlan(setId){
+    var set = state.savedSets.filter(function(s){ return s.id === setId; })[0];
+    if(!set) return;
+    var text = set.items.map(function(it){ return it.name; }).join(' + ');
+    var emptySlot = state.plannedMeals.filter(function(p){ return !p.text.trim(); })[0];
+    if(emptySlot) emptySlot.text = text;
+    else state.plannedMeals.push({ id: uid(), text: text });
+    persist(); renderAll();
+    toast('Added to the plan');
+  }
+  function renderMealPlan(){
+    if(state.plannedMeals.length === 0){
+      state.plannedMeals.push({id:uid(),text:''}, {id:uid(),text:''}, {id:uid(),text:''});
+    }
+    var host = document.getElementById('mealPlanBody');
+    host.innerHTML = state.plannedMeals.map(function(p){
+      var hasText = !!(p.text && p.text.trim());
+      return '<div class="planrow2">'
+        + '<input class="planinput" data-plantext="'+p.id+'" placeholder="What\'s the plan?" value="'+escapeHTML(p.text||'')+'">'
+        + (hasText ? '<label class="donecheck" title="Mark done"><input type="checkbox" data-plandone="'+p.id+'"> Done</label>' : '')
         + '</div>';
     }).join('');
-    host.querySelectorAll('[data-plan]').forEach(function(inp){
-      inp.addEventListener('change', function(){
-        var iso = inp.dataset.plan;
-        var v = inp.value.trim();
-        if(v) state.plannedMeals[iso] = v; else delete state.plannedMeals[iso];
-        persist();
-      });
+    host.querySelectorAll('[data-plantext]').forEach(function(inp){
+      inp.addEventListener('change', function(){ updatePlanText(inp.dataset.plantext, inp.value.trim()); });
+    });
+    host.querySelectorAll('[data-plandone]').forEach(function(cb){
+      cb.addEventListener('change', function(){ if(cb.checked) removePlanEntry(cb.dataset.plandone); });
     });
   }
   function wireRows(host){
@@ -847,7 +863,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     updateSpinAvailability();
     renderList();
     renderSavedSets();
-    renderWeekPlan();
+    renderMealPlan();
   }
 
   /* ---------------- wiring ---------------- */
@@ -880,6 +896,7 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   });
   document.getElementById('spinBtn').addEventListener('click', spin);
   document.getElementById('saveSetBtn').addEventListener('click', saveCurrentSet);
+  document.getElementById('addPlanBtn').addEventListener('click', addPlanRow);
   document.getElementById('listToggle').addEventListener('click', function(){
     state.listOpen = !state.listOpen; saveLocal(); renderList();
   });
