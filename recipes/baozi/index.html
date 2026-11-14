@@ -1,0 +1,111 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><meta name="robots" content="index,follow"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>Baozi — QED Recipes</title>
+<style>
+:root{
+  --ground-top:#E9EFFC;--ground-bot:#FFF4DE;--paper:#FFFFFF;--paper-tint:#F5F8FF;
+  --ink:#1E2350;--ink-soft:#5C6396;--ink-muted:#8B92C0;--line:#CFD9F2;
+  --sun:#FFC13B;--accent:#6C4FE0;
+  --shadow:0 10px 30px rgba(30,35,80,.10);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ground-top:#0D1233;--ground-bot:#241E38;--paper:#191F45;--paper-tint:#141A3B;
+    --ink:#EEF2FF;--ink-soft:#A6AFDF;--ink-muted:#7E86B8;--line:#333C74;
+    --sun:#FFCE5C;--accent:#B49CFF;
+    --shadow:0 10px 30px rgba(0,0,0,.32);
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Arial,Helvetica,"Segoe UI",sans-serif;
+  color:var(--ink);background:linear-gradient(168deg,var(--ground-top) 0%,var(--ground-bot) 100%);
+  background-attachment:fixed;min-height:100vh;-webkit-text-size-adjust:100%;
+}
+.wrap{max-width:680px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(14px,3vw,24px) 56px}
+.recipe-cols{display:flex;flex-direction:column}
+@media (min-width:900px){
+  .wrap{max-width:980px}
+  .recipe-cols{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);margin-bottom:18px}
+.brand svg{width:30px;height:30px;flex:none}
+.brand span{font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:1.05rem}
+.back{display:inline-block;margin-bottom:14px;font-weight:800;font-size:.84rem;color:var(--ink-soft);text-decoration:none}
+.back:hover{color:var(--ink)}
+.titlerow{display:flex;align-items:center;gap:12px;margin:0 0 .2em}
+h1{font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:clamp(2rem,4.6vw,2.8rem);margin:0;line-height:1.08}
+.meta{font-weight:700;color:var(--ink-soft);font-size:1.05rem;margin:0 0 .3em}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:clamp(16px,2.4vw,24px);margin-bottom:16px}
+.eyebrow{display:flex;align-items:center;gap:6px;font-weight:800;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);margin:0 0 12px}
+ul.ing{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:9px}
+ul.ing li{font-weight:700;font-size:1.15rem;line-height:1.5}
+ul.ing li.subhead{list-style:none;margin-left:-20px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;color:var(--ink-muted);margin-top:6px}
+ol.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:16px}
+ol.steps li{font-weight:600;font-size:1.18rem;line-height:1.6}
+ol.steps b{color:var(--accent);font-weight:800}
+.tip{background:var(--paper-tint);border:1.5px dashed var(--line);border-radius:14px;padding:12px 16px;font-weight:700;font-size:.88rem;color:var(--ink-soft);line-height:1.5}
+.tip b{color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <a class="brand" href="../">
+    <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path d="M24 11c-5-3.3-11-3.3-16 0v23c5-3.3 11-3.3 16 0 5-3.3 11-3.3 16 0V11c-5-3.3-11-3.3-16 0z" fill="#FFC13B" stroke="#EE9B14" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M24 11v23" fill="none" stroke="#EE9B14" stroke-width="2.5"/>
+    </svg>
+    <span>QED Recipes</span>
+  </a>
+  <a class="back" href="../">← All recipes</a>
+
+  <div class="titlerow"><svg class="hat" viewBox="0 0 48 48" aria-hidden="true" width="40" height="40"><rect x="14" y="30" width="20" height="9" rx="2" fill="#FFC13B" stroke="#EE9B14" stroke-width="2.5"/><path d="M14 30c-4.2 0-7.5-3.3-7.5-7.5 0-3.6 2.6-6.6 6-7.2.5-4.2 4.3-7.5 8.5-7.5 2.1 0 4 .8 5.4 2.1C27.6 9 29.3 8.3 31 8.3c4.8 0 8.7 3.9 8.7 8.7 0 .5 0 1-.1 1.5 3.1 1 5.4 3.9 5.4 7.3 0 4.3-3.5 7.7-7.7 7.7H14v-3.5z" fill="#FFC13B" stroke="#EE9B14" stroke-width="2.5" stroke-linejoin="round"/></svg><h1>Baozi</h1></div>
+  <p class="meta">Nainai's recipe | Makes ~16 buns | Total: ~2.5 hrs</p>
+
+  <div class="recipe-cols">
+    <section class="card">
+      <p class="eyebrow"><svg class="eicon" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><rect x="10.5" y="1" width="3" height="4.5" rx="1.3" fill="#EE9B14"/><path d="M8 5.3C6.5 8 6.5 15 8 17.5c1.5 2.2 6.5 2.2 8 0 1.5-2.5 1.5-9.5 0-12.2" fill="none" stroke="#EE9B14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.3 5.6v11.6M12 5.3v12.2M14.7 5.6v11.6" stroke="#EE9B14" stroke-width="1" fill="none" stroke-linecap="round"/></svg>Ingredients</p>
+      <ul class="ing">
+        <li class="subhead">Dough</li>
+        <li>1 pkg active dry yeast</li>
+        <li>4 cups flour</li>
+        <li>1.5 cups water</li>
+        <li class="subhead">Savory filling</li>
+        <li>1 lb ground beef, pork, or turkey</li>
+        <li>Equal volume of a vegetable, finely chopped or shredded (raw butternut squash, cooked green beans, or raw cabbage)</li>
+        <li>1/2 onion, finely diced</li>
+        <li>1 egg</li>
+        <li>1/4 cup water</li>
+        <li>3 Tbsp soy sauce</li>
+        <li>2 tsp salt</li>
+        <li>Optional: minced garlic or ginger</li>
+        <li>If using turkey: add 1 Tbsp oil</li>
+        <li class="subhead">— OR Sweet filling —</li>
+        <li>1 cup creamy peanut butter</li>
+        <li>3 Tbsp sugar (or to taste)</li>
+        <li>3 Tbsp hot water</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <p class="eyebrow"><svg class="eicon" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path d="M9 1c.75.7-.75 1.4-.75 2.1s1.5 1.4.75 2.1M12 .5c.75.7-.75 1.4-.75 2.1s1.5 1.4.75 2.1M15 1c.75.7-.75 1.4-.75 2.1s1.5 1.4.75 2.1" stroke="#EE9B14" stroke-width="1.1" fill="none" stroke-linecap="round"/><rect x="5" y="11" width="14" height="7.5" rx="1.6" fill="#FFC13B" stroke="#EE9B14" stroke-width="1.6"/><path d="M3.3 13h1.4M19.3 13h1.4" stroke="#EE9B14" stroke-width="1.6" stroke-linecap="round"/><rect x="5" y="9.2" width="14" height="2" rx="1" fill="#EE9B14"/></svg>Instructions</p>
+      <ol class="steps">
+        <li>Make the dough: Add the <b>yeast</b> (1 pkg) to 1/2 cup of warm water, let sit <b>5 min</b>, then stir.</li>
+        <li>Add the <b>flour</b> (4 cups) to a large mixing bowl. When the yeast is ready, add the yeast/water mixture and the remaining 1 cup of water and stir.</li>
+        <li>Knead about <b>5 min</b>, then cover the bowl with a towel and let sit for <b>10 min</b>.</li>
+        <li>Knead another <b>3–5 min</b> until smooth, then cover again and let rise for <b>50–60 min</b>.</li>
+        <li>Make the filling: Thoroughly mix the ingredients for the sweet or savory filling in a bowl.</li>
+        <li>Assemble and cook, for savory filling / bao shape: After the dough has risen, cut it into 4 equal parts.</li>
+        <li>Take one part out at a time onto a lightly floured cutting board. Squeeze and roll the dough into a log (about 12" long), then cut into 1" pieces.</li>
+        <li>Sprinkle flour over the dough pieces, then shape them into discs. Use a rolling pin to roll the discs out into flat, thin circles.</li>
+        <li>Add a <b>Tbsp of filling</b> to the center of each circle, then pinch the edges closed. Let the shaped bao rest <b>10 min</b> before cooking.</li>
+        <li>To cook: heat a large pan over medium heat and add a thin layer of oil. Add a single layer of bao and let heat a few minutes. Add 1/2 cup water, cover, and turn down the heat until the water simmers. Cook <b>5–10 min</b>, without opening the lid.</li>
+        <li>Or, for sweet filling / roll shape: After the dough has risen, cut it into 4 equal parts.</li>
+        <li>Take one part out at a time onto a lightly floured cutting board. Use a rolling pin to roll the dough into a large rectangle (about the size of a medium cutting board).</li>
+        <li>Spread the filling over the rectangle, then roll up into a log and cut into 1" pieces. Let the pieces rest <b>10 min</b> before cooking.</li>
+        <li>To cook: heat a large pan over medium heat and add a thin layer of oil. Add a single layer of rolled dough pieces and let heat a few minutes. Add 1/2 cup water, cover, and turn down the heat until the water simmers. Cook <b>5–10 min</b>, without opening the lid.</li>
+      </ol>
+    </section>
+  </div>
+
+  <p class="tip"><b>Tip:</b> To reheat, place the bao or rolls in an unoiled pan, cover, and heat over low heat for about 5 min, or until warm.</p>
+</div>
+</body></html>
