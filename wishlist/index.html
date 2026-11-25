@@ -62,8 +62,11 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .kidcard[data-kid="eve"]{--kid:var(--eve);--kid-tint:var(--eve-tint)}
 .kidname{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:1.3rem;color:var(--kid);margin:0 0 12px;letter-spacing:.03em}
 
-.addrow{display:grid;grid-template-columns:1fr auto;gap:8px}
+.addrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:stretch}
+.addinputs{display:flex;flex-direction:column;gap:7px}
 .addrow input{width:100%;font-family:inherit;font-weight:700;font-size:1rem;color:var(--ink);background:var(--paper-tint);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px}
+.addrow input[data-addlink]{font-size:.86rem;font-weight:600;color:var(--ink-soft)}
+.addrow .btn.solid{align-self:stretch}
 .addopts{display:flex;align-items:center;gap:10px;margin-top:10px}
 .addopts .seglab{font-weight:800;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
 
@@ -77,10 +80,14 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
 .wlist{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
 .witem{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--paper-tint);border-radius:14px;padding:10px 14px}
 .wname{flex:1;min-width:110px;font-weight:700;font-size:1rem;overflow-wrap:anywhere}
+.wname a{color:inherit;text-decoration-color:var(--ink-muted)}
+.wname a:hover{text-decoration-color:var(--ink)}
 .wstars{display:inline-flex;gap:1px;flex:none}
 .wstars .starbtn svg{width:19px;height:19px}
-.iconbtn{border:none;background:transparent;color:var(--ink-muted);cursor:pointer;font-size:1rem;line-height:1;padding:5px 7px;border-radius:8px;flex:none}
+.iconbtn{border:none;background:transparent;color:var(--ink-muted);cursor:pointer;font-size:1rem;line-height:1;padding:5px 7px;border-radius:8px;flex:none;display:inline-flex;align-items:center}
 .iconbtn:hover{color:var(--ink);background:var(--paper)}
+.iconbtn.haslink{color:var(--sun-deep)}
+.iconbtn svg{width:16px;height:16px;display:block}
 
 .empty{font-weight:700;color:var(--ink-muted);font-size:.9rem;padding:14px 4px}
 
@@ -130,7 +137,10 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     <section class="card kidcard" data-kid="zev">
       <h2 class="kidname">Z</h2>
       <form class="addrow" data-addform="zev">
-        <input data-addname="zev" placeholder="What do you want?" aria-label="Wish list item for Z" autocomplete="off">
+        <div class="addinputs">
+          <input data-addname="zev" placeholder="What do you want?" aria-label="Wish list item for Z" autocomplete="off">
+          <input data-addlink="zev" type="text" placeholder="Link (optional)" aria-label="Link for this item" autocomplete="off" inputmode="url">
+        </div>
         <button type="submit" class="btn solid">Add</button>
       </form>
       <div class="addopts">
@@ -143,7 +153,10 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     <section class="card kidcard" data-kid="eve">
       <h2 class="kidname">E</h2>
       <form class="addrow" data-addform="eve">
-        <input data-addname="eve" placeholder="What do you want?" aria-label="Wish list item for E" autocomplete="off">
+        <div class="addinputs">
+          <input data-addname="eve" placeholder="What do you want?" aria-label="Wish list item for E" autocomplete="off">
+          <input data-addlink="eve" type="text" placeholder="Link (optional)" aria-label="Link for this item" autocomplete="off" inputmode="url">
+        </div>
         <button type="submit" class="btn solid">Add</button>
       </form>
       <div class="addopts">
@@ -222,6 +235,18 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     return '<svg viewBox="0 0 48 48" aria-hidden="true"><path class="'+(filled?'star-fill':'star-empty')+'" '
       + 'd="M24 6l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" stroke-width="2.5" stroke-linejoin="round"/></svg>';
   }
+  function linkSVG(){
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path d="M10 13a5 5 0 0 0 7.07 0l2-2a5 5 0 0 0-7.07-7.07l-1 1"/>'
+      + '<path d="M14 11a5 5 0 0 0-7.07 0l-2 2a5 5 0 0 0 7.07 7.07l1-1"/>'
+      + '</svg>';
+  }
+  function normalizeUrl(u){
+    u = (u || '').trim();
+    if(!u) return '';
+    if(!/^[a-z][a-z0-9+.-]*:\/\//i.test(u)) u = 'https://' + u;
+    return u;
+  }
 
   var state = {
     items: [],
@@ -290,8 +315,8 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
   }
 
   /* ---------------- mutations ---------------- */
-  function addItem(kid, name, stars){
-    state.items.push({ id: uid(), kid: kid, name: name, stars: stars, createdAt: new Date().toISOString() });
+  function addItem(kid, name, stars, url){
+    state.items.push({ id: uid(), kid: kid, name: name, stars: stars, url: url || '', createdAt: new Date().toISOString() });
     persist(); renderAll();
   }
   function updateItem(id, patch){
@@ -327,9 +352,14 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
       stars += '<button type="button" class="starbtn" data-star="'+it.id+'" data-n="'+i+'" aria-label="Set '+i+' star'+(i>1?'s':'')+'">'
         + starSVG(i <= it.stars) + '</button>';
     }
+    var nameHTML = it.url
+      ? '<a href="'+escapeHTML(it.url)+'" target="_blank" rel="noopener">'+escapeHTML(it.name)+'</a>'
+      : escapeHTML(it.name);
+    var linkTitle = it.url ? 'Edit link' : 'Add a link';
     return '<li class="witem" data-id="'+it.id+'">'
-      + '<span class="wname">'+escapeHTML(it.name)+'</span>'
+      + '<span class="wname">'+nameHTML+'</span>'
       + '<span class="wstars">'+stars+'</span>'
+      + '<button class="iconbtn'+(it.url?' haslink':'')+'" data-link="'+it.id+'" title="'+linkTitle+'" aria-label="'+linkTitle+' for '+escapeHTML(it.name)+'">'+linkSVG()+'</button>'
       + '<button class="iconbtn" data-del="'+it.id+'" title="Remove" aria-label="Remove '+escapeHTML(it.name)+'">×</button>'
       + '</li>';
   }
@@ -352,6 +382,16 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     host.querySelectorAll('[data-del]').forEach(function(btn){
       btn.addEventListener('click', function(){ removeItem(btn.dataset.del); });
     });
+    host.querySelectorAll('[data-link]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var id = btn.dataset.link;
+        var it = state.items.filter(function(x){ return x.id === id; })[0];
+        if(!it) return;
+        var entered = window.prompt('Link for "'+it.name+'" (leave blank to remove)', it.url || '');
+        if(entered === null) return;
+        updateItem(id, { url: normalizeUrl(entered) });
+      });
+    });
   }
   function renderAll(){
     renderAddStars();
@@ -364,10 +404,12 @@ h1{font-family:"Grandstander","Nunito",sans-serif;font-weight:800;font-size:clam
     form.addEventListener('submit', function(e){
       e.preventDefault();
       var input = form.querySelector('[data-addname]');
+      var linkInput = form.querySelector('[data-addlink]');
       var name = input.value.trim();
       if(!name) return;
-      addItem(kid, name, state.addStars[kid]);
+      addItem(kid, name, state.addStars[kid], normalizeUrl(linkInput.value));
       input.value = '';
+      linkInput.value = '';
       input.focus();
     });
   });
